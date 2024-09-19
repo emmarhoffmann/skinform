@@ -322,7 +322,7 @@ pore_clogging_ingredients = [
 ]
 
 # MongoDB setup
-client = MongoClient("mongodb+srv://erhoffmann128:Rushlake12!!@skinform.coz0o.mongodb.net/?retryWrites=true&w=majority&appName=skinform")
+client = MongoClient("")
 db = client.skincare
 
 # Home route
