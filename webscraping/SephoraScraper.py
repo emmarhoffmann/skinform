@@ -12,6 +12,20 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 }
 
+# Save progress to a file (using the last processed product URL)
+def save_progress(product_url):
+    with open("progress.txt", "w") as f:
+        f.write(product_url)
+
+# Read the last processed product URL
+def get_last_processed_url():
+    try:
+        with open("progress.txt", "r") as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return None  # If no progress file exists, start from the beginning
+
+
 def get_all_products():
     all_product_links = []
     sitemap_url = "https://www.sephora.com/sitemaps/products-sitemap.xml"
@@ -39,37 +53,35 @@ def filter_products(product_data):
         'eyeshadow', 'eyeliner', 'mascara', 'lipstick', 'lip gloss',
         'shampoo', 'conditioner', 'hair treatment', 'styling product',
         'body wash', 'soap', 'lotion', 'cream', 'oil', 'scrub', 'deodorant',
-        'sunscreen', 'after-sun', 'perfume', 'cologne', 'facial-toner-skin-toner', 'mens-grooming', 'body-wash-shower-gel', 'vegan-makeup',
+        'sunscreen', 'after-sun', 'facial-toner-skin-toner', 'body-wash-shower-gel', 'vegan-makeup',
         'setting-powder-face-powder', 'tinted-moisturizer', 'dry-skin-treatment',
         'mens-personal-care', 'eye-treatment-dark-circle-treatment', 'skin-care-sets-travel-value',
-        'concealer', 'clean-skin-care', 'fake-eyelashes-false-eyelashes', 'skin-care-solutions',
-        'mens-hair-care', 'complexion-sets', 'travel-size-toiletries', 'mens-body-wash',
-        'anti-aging-tools', 'blotting-paper-oil-control', 'body-dry-skin-products', 'face-wipes',
+        'concealer', 'clean-skin-care', 'skin-care-solutions', 'mens-hair-care', 'complexion-sets',
+        'travel-size-toiletries', 'mens-body-wash', 'body-dry-skin-products', 'face-wipes',
         'foundation-makeup', 'blush', 'bb-cream-cc-cream', 'cleansing-oil-face-oil', 'lip-gloss',
-        'acne-treatment-blemish-remover', 'mini-makeup', 'self-tanning-products', 'makeup-brush-sets',
-        'facial-treatments', 'fragrance', 'dark-spot-remover', 'body-texture-kp-products',
-        'damaged-hair-treatment', 'sheet-masks', 'cheek-palettes', 'sunscreen', 'skin-care-tools',
-        'under-eye-concealer', 'lip-oil', 'facial-cleansing-brushes', 'makeup-removers',
+        'acne-treatment-blemish-remover', 'mini-makeup', 'self-tanning-products',
+        'facial-treatments', 'dark-spot-remover', 'body-texture-kp-products',
+        'damaged-hair-treatment', 'sheet-masks', 'cheek-palettes', 'sunscreen',
+        'under-eye-concealer', 'lip-oil', 'makeup-removers',
         'hair-treatment-dry-scalp-treatment', 'body-lotion-body-oil', 'luminizer-luminous-makeup',
-        'face-makeup', 'foundation-brushes-face-brushes', 'makeup-primer-face-primer', 'bronzer-makeup',
+        'face-makeup', 'makeup-primer-face-primer', 'bronzer-makeup',
         'skin-care-sets-for-men', 'eye-mask', 'night-cream', 'makeup-kits-makeup-sets', 'mens-hair-products',
-        'skincare', 'pedicure-tools-manicure-tools', 'eyeshadow-palettes', 'cleanser', 
+        'skincare', 'eyeshadow-palettes', 'cleanser', 
         'wrinkle-cream-wrinkle-remover', 'face-tanner-self-tanner-face', 'neck-cream-decollete', 
         'makeup-palettes', 'moisturizing-cream-oils-mists', 'vegan-skin-care', 'exfoliating-scrub-exfoliator',
         'eyeliner', 'face-wash-for-men', 'color-correcting', 'body-hyperpigmentation-products',
         'sunscreen-men', 'facial-peels', 'skin-brighteners-dull-skin-treatments', 'lipstick',
-        'moisturizer-skincare', 'makeup-accessories', 'body-care', 'body-stretch-mark-firming-cream',
-        'eyeliner-brushes-eyeshadow-brushes', 'eyebrow-makeup-pencils', 'makeup-cosmetics',
-        'body-moisturizers', 'lip-palettes-gloss-sets', 'hand-sanitizer-soap', 'sunscreen-sun-protection',
+        'moisturizer-skincare', 'makeup-accessories', 'body-care', 'body-stretch-mark-firming-cream', 'eyebrow-makeup-pencils',
+        'makeup-cosmetics', 'body-moisturizers', 'lip-palettes-gloss-sets', 'hand-sanitizer-soap', 'sunscreen-sun-protection',
         'body-mist-hair-mist', 'makeup-bags-cosmetic-bags', 'face-serum', 'body-scrub-exfoliant',
-        'makeup-brush-cleaner', 'pore-minimizing-products', 'hand-lotion-foot-cream', 'eye-makeup',
+        'pore-minimizing-products', 'hand-lotion-foot-cream', 'eye-makeup',
         'eyeshadow', 'face-mask', 'lip-plumper', 'skin-care-gift-sets', 'face-sunscreen', 'lips-makeup',
-        'clean-makeup', 'exclusive-products', 'lip-balm-lip-care', 'mens-shampoo-conditioner',
-        'face-mist-face-spray', 'cheek-makeup', 'lip-brushes-lipstick-brushes', 'wellness-skincare',
-        'mens-facial-products', 'anti-aging-skin-care', 'eye-sets', 'makeup-tools', 'mascara',
+        'clean-makeup', 'lip-balm-lip-care', 'mens-shampoo-conditioner',
+        'face-mist-face-spray', 'cheek-makeup', 'wellness-skincare',
+        'mens-facial-products', 'anti-aging-skin-care', 'eye-sets',
         'eye-cream-dark-circles', 'liquid-lipstick', 'lip-liner-lip-pencils', 'acne-products-acne-cream',
-        'moisturizer-men', 'contour-palette-brush', 'makeup-sponges', 'face-wash-facial-cleanser', 
-        'lip-stain', 'makeup-brushes', 'eye-cream-men', 'eyeshadow-primer-eye-primer', 'aftershave',
+        'moisturizer-men', 'face-wash-facial-cleanser', 
+        'lip-stain', 'eye-cream-men', 'aftershave',
         'hair-masks', 'conditioner-hair', 'mini-bath-products', 'shampoo-sulfate-free-shampoo', 
         'bubble-bath-oil', 'hair-products-treatments', 'kiss-holiday-lipstick-collection', 
         'deodorant-antiperspirant', 'hair-products', 'shampoo-conditioner', 'mini-skincare', 
@@ -154,8 +166,20 @@ def main():
     
     new_products_count = 0
     total_products = len(product_links)
+
+    # Get the last processed product URL
+    last_processed_url = get_last_processed_url()
+    
+    # Flag to skip products until we reach the last processed one
+    resume_scraping = False if last_processed_url else True
     
     for index, product_url in enumerate(product_links, 1):
+        # Skip URLs until we reach the last processed URL
+        if not resume_scraping:
+            if product_url == last_processed_url:
+                resume_scraping = True
+            continue
+
         if product_url in existing_products:
             print(f"Product already exists in CSV: {product_url}")
             continue
@@ -176,10 +200,15 @@ def main():
         else:
             print(f"Skipped product: {product_url} (Not in relevant categories)")
         
+        # Save progress after processing each product
+        save_progress(product_url)
+        
         print(f"Progress: {index}/{total_products} products processed. New products added: {new_products_count}")
         time.sleep(1)  # Be polite to the server
 
     print(f"Scraping completed. Total new products added: {new_products_count}")
+
+
 
 if __name__ == "__main__":
     main()
