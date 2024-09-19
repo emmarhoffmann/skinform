@@ -2,9 +2,19 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 import re
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()  # Ensure this is before accessing any environment variables
 
 app = Flask(__name__)
 CORS(app)
+
+# MongoDB setup
+mongo_uri = os.getenv('MONGO_URI')
+client = MongoClient(mongo_uri)
+db = client.skinform
 
 # Pore clogging ingredients, courtesy of Acne Clinc NYC: https://acneclinicnyc.com/pore-clogging-ingredients/
 pore_clogging_ingredients = [
@@ -321,10 +331,6 @@ pore_clogging_ingredients = [
     "Zea mays"
 ]
 
-# MongoDB setup
-client = MongoClient("mongodb+srv://erhoffmann128:Rushlake12!!@skinform.coz0o.mongodb.net/?retryWrites=true&w=majority&appName=skinform")
-db = client.skincare
-
 # Home route
 @app.route('/')
 def home():
@@ -343,6 +349,7 @@ def ingredient_matches(product_ingredient, pore_clogging_list):
     return any(normalized_clog <= normalized_product_ingredient for normalized_clog in pore_clogging_list)
 
 # Example of using this in your Flask route
+# Modify the product_results append part to include a flag for each ingredient
 @app.route('/search-products', methods=['GET'])
 def search_products():
     search_term = request.args.get('name')
@@ -356,18 +363,21 @@ def search_products():
     if products:
         product_results = []
         for product in products:
-            flagged_ingredients = [
-                ingredient for ingredient in product['ingredients']
-                if ingredient_matches(ingredient, normalized_pore_clogging)
-            ]
-
+            ingredients_info = []
+            for ingredient in product.get('ingredients', []):
+                normalized_ingredient = normalize_ingredient(ingredient)
+                is_pore_clogging = normalized_ingredient in normalized_pore_clogging
+                ingredients_info.append({
+                    'name': ingredient,
+                    'is_pore_clogging': is_pore_clogging
+                })
+            
             product_results.append({
                 'name': product['name'],
                 'brand': product['brand'],
                 'product_category': product.get('product_category', ''),
                 'image_url': product.get('image_url', ''),
-                'ingredients': product['ingredients'],
-                'pore_clogging': flagged_ingredients
+                'ingredients': ingredients_info
             })
 
         return jsonify({'products': product_results})
@@ -385,12 +395,14 @@ def recommend_products():
             {'name': {'$regex': search_term, '$options': 'i'}},
             {'brand': {'$regex': search_term, '$options': 'i'}}
         ]
-    }).limit(4)  # Limit to 4 recommended products
+    }).limit(5)  # Limit to 5 recommended products
 
     # Format recommended products
     recommendations = [{
         'name': product['name'],
-        'brand': product['brand']
+        'brand': product['brand'],
+        'image_url': product.get('image_url', 'default_image.jpg'),  # Fallback if no image URL
+        'ingredients': product.get('ingredients', [])  # Ensure ingredients are included
     } for product in recommended_products]
 
     return jsonify(recommendations)

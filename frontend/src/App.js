@@ -1,53 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './App.css';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [product, setProduct] = useState(null);
-  const [error, setError] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Debounce timer to delay searching until the user stops typing
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchTerm) {
-        axios.get(`http://127.0.0.1:5000/search-products?name=${searchTerm}`)
-          .then(response => {
-            if (response.data.products && response.data.products.length > 0) {
-              setProduct(response.data.products[0]);
-              setError(null);
-              setRecommendedProducts([]); // Clear recommendations when exact product is found
-            } else {
-              setProduct(null);
-              setRecommendedProducts([]); // Clear recommendations
-            }
-          })
-          .catch(() => {
-            setError('Product not found');
-            setProduct(null);
-            setRecommendedProducts([]); // Clear recommendations if search fails
-          });
-
-        // Fetch recommended products
-        axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
-          .then(response => {
-            if (response.data.length > 0) {
-              setRecommendedProducts(response.data);
-            } else {
-              setRecommendedProducts([]);
-            }
-          })
-          .catch(() => {
-            setRecommendedProducts([]); // Clear recommendations if recommendation API fails
-          });
-      } else {
-        setProduct(null);
-        setRecommendedProducts([]);
-      }
-    }, 500); // Delay the search by 500ms
-
-    return () => clearTimeout(timer);
+    if (searchTerm) {
+      setShowDropdown(true);
+      axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
+        .then(response => {
+          setRecommendedProducts(response.data.slice(0, 5));
+        })
+        .catch(() => {
+          setRecommendedProducts([]);
+        });
+    } else {
+      setShowDropdown(false);
+    }
   }, [searchTerm]);
+
+  const handleProductSelect = (product) => {
+    setSelectedProduct(product); // Set the selected product
+    console.log('Selected product ingredients:', product.ingredients); // Inspect ingredients
+    setShowDropdown(false); // Hide dropdown after selection
+};
+
+  const handleImageError = (e) => {
+    console.error('Image failed to load:', e.target.src);
+    e.target.onerror = null;
+    e.target.src = '/path_to_default_image.jpg'; // Make sure this path is correct
+  };
 
   return (
     <div className="App">
@@ -59,40 +45,43 @@ function App() {
         placeholder="Enter product name or brand"
       />
 
-      {error && <p>{error}</p>}
-
-      {product && (
-        <div>
-          <h2>{product.name}</h2>
-          <p>Brand: {product.brand}</p>
-          <img src={product.image_url} alt={product.name} style={{ width: '150px', height: '150px' }} />
-          <h4>Ingredients:</h4>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {product.ingredients.map((ingredient, index) => (
-              <li
-                key={index}
-                style={{ display: 'inline', color: product.pore_clogging && product.pore_clogging.includes(ingredient) ? 'red' : 'black' }}
-              >
-                {ingredient}
-                {index !== product.ingredients.length - 1 && ', '}
-              </li>
-            ))}
-          </ul>
+      {showDropdown && (
+        <div className="dropdown">
+          {recommendedProducts.map((product, index) => (
+            <div key={index} className="suggestion-item" onClick={() => handleProductSelect(product)}>
+              <img 
+                src={product.image_url} 
+                alt={product.name} 
+                className="suggestion-image" 
+                onError={handleImageError}
+              />
+              <p className="suggestion-title">{product.brand} - {product.name}</p>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Recommended products */}
-      {recommendedProducts.length > 0 && (
-        <div>
-          <h3>Recommended Products:</h3>
-          <ul>
-            {recommendedProducts.map((recProduct, index) => (
-              <li key={index}>
-                <h4>{recProduct.name}</h4>
-                <p>Brand: {recProduct.brand}</p>
-              </li>
-            ))}
-          </ul>
+      {selectedProduct && (
+        <div className="product-detail">
+          <img 
+            src={selectedProduct.image_url} 
+            alt={selectedProduct.name} 
+            className="product-image" 
+            onError={handleImageError}
+          />
+          <div>
+            <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+            <h3>Ingredients:</h3>
+            {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+              <ul className="ingredients-list">
+                {selectedProduct.ingredients.map((ingredient, index) => (
+                  <li key={index}>{ingredient}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No ingredients information available.</p>
+            )}
+          </div>
         </div>
       )}
     </div>
