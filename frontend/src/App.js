@@ -37,6 +37,12 @@ function App() {
 
   return (
     <div className="App">
+      <div className="header">
+        <img src="/path_to_your_logo.jpg" alt="Skinform logo" style={{ height: '50px' }} />
+        <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
+        <p>Search our analyzed products or paste any product's ingredients to check for pore-clogging ingredients.</p>
+      </div>
+    <div className="App">
       <h1>Skincare Product Search</h1>
       <input
         type="text"
@@ -85,6 +91,7 @@ function App() {
         </div>
       )}
     </div>
+  </div>
   );
 }
 

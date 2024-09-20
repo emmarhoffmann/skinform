@@ -1,42 +1,74 @@
 .App {
   text-align: center;
+  font-family: 'Arial', sans-serif; /* Example of a modern font */
 }
 
 .dropdown {
   border: 1px solid #ccc;
   padding: 10px;
-  width: 80%; /* Adjust width as needed */
-  margin: 20px auto; /* Center the dropdown */
+  width: 80%;
+  margin: 20px auto;
   position: relative;
-  z-index: 1000; /* Ensures the dropdown appears on top of other content */
+  z-index: 1000;
   background-color: white;
 }
 
 .suggestion-item {
   display: flex;
   align-items: center;
+  padding: 10px;
   margin-bottom: 10px;
-  cursor: pointer; /* Makes it clear that suggestions are clickable */
+  cursor: pointer;
+  border: 1px solid #eee; /* Subtle border */
+  transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.suggestion-item:hover {
+  background-color: #f9f9f9; /* Slight background color on hover */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Shadow effect on hover */
 }
 
 .product-image, .suggestion-image {
   width: 50px;
   height: 50px;
   margin-right: 10px;
+  border-radius: 5px; /* Rounded corners for images */
 }
 
-.product-title, .suggestion-title {
-  font-size: 16px;
+.product-detail {
+  border: 1px solid #e1e1e1;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-title {
+  font-size: 24px;
   color: #333;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 15px;
 }
 
 .ingredients-list {
-  padding: 0;
   list-style-type: none;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 .ingredients-list li {
-  font-size: 14px;
-  color: #666;
   margin: 5px 0;
 }
+
+.ingredients-list li.pore-clogging {
+  color: red;
+  font-weight: bold;
+}
+
