@@ -48,7 +48,7 @@ function App() {
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Enter product name or brand"
+        placeholder="Search Products..."
       />
 
       {showDropdown && (

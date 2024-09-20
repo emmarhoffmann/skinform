@@ -1,16 +1,43 @@
 .App {
   text-align: center;
-  font-family: 'Arial', sans-serif; /* Example of a modern font */
+  font-family: 'Arial', sans-serif;
+}
+
+.search-container {
+  position: relative;
+  margin: 20px auto;
+  width: 70%; /* Increased width for a larger search container */
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 35px; /* Slightly reduced padding for a more moderate height */
+  font-size: 16px; /* Slightly smaller font size */
+  border: 2px solid #ccc;
+  border-radius: 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Reduced shadow */
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ccc;
+  font-size: 20px; /* Slightly smaller icon */
 }
 
 .dropdown {
+  width: 100%; /* Match the width of the search bar */
   border: 1px solid #ccc;
   padding: 10px;
-  width: 80%;
-  margin: 20px auto;
-  position: relative;
+  position: absolute;
+  left: 0; /* Align with the left edge of the search bar */
   z-index: 1000;
   background-color: white;
+  max-height: 400px; /* Reduced max-height for a smaller dropdown */
+  overflow-y: auto; /* Changed to auto for scrolling if needed */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Added shadow for depth */
 }
 
 .suggestion-item {
@@ -19,20 +46,20 @@
   padding: 10px;
   margin-bottom: 10px;
   cursor: pointer;
-  border: 1px solid #eee; /* Subtle border */
-  transition: all 0.3s ease; /* Smooth transition for hover effect */
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
 }
 
 .suggestion-item:hover {
-  background-color: #f9f9f9; /* Slight background color on hover */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Shadow effect on hover */
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .product-image, .suggestion-image {
   width: 50px;
   height: 50px;
   margin-right: 10px;
-  border-radius: 5px; /* Rounded corners for images */
+  border-radius: 5px;
 }
 
 .product-detail {
@@ -71,4 +98,3 @@
   color: red;
   font-weight: bold;
 }
-
