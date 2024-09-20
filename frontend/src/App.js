@@ -8,90 +8,106 @@ function App() {
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  function highlightText(fullText, searchTerm) {
+    // Guard clauses for empty inputs
+    if (!fullText || !searchTerm) return fullText;
+  
+    // Trim and escape special characters in searchTerm to safely use in regex
+    const escapedSearchTerm = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Regex to match each word in the search term separately
+    const regexPattern = escapedSearchTerm.split(/\s+/).map(word => {
+      // Return pattern to match word at a word boundary or part of it
+      return `(${word})`;
+    }).join("|");
+  
+    const regex = new RegExp(regexPattern, 'gi');
+    const parts = fullText.split(regex);
+    
+    // Reconstruct the string with highlighted matches
+    return parts.map(part => regex.test(part) ? <strong>{part}</strong> : part);
+  }
+  
+  
+  
   useEffect(() => {
     if (searchTerm) {
-      setShowDropdown(true);
       axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
         .then(response => {
-          setRecommendedProducts(response.data.slice(0, 5));
+          const results = response.data.slice(0, 5); // Limit to 5 products
+          setRecommendedProducts(results);
+          setShowDropdown(results.length > 0); // Only show dropdown if there are results
         })
         .catch(() => {
           setRecommendedProducts([]);
+          setShowDropdown(false); // Ensure dropdown is not shown on error
         });
     } else {
+      setRecommendedProducts([]);
       setShowDropdown(false);
     }
   }, [searchTerm]);
 
   const handleProductSelect = (product) => {
-    setSelectedProduct(product); // Set the selected product
-    console.log('Selected product ingredients:', product.ingredients); // Inspect ingredients
+    setSelectedProduct(product);
+    console.log('Selected product ingredients:', product.ingredients);
     setShowDropdown(false); // Hide dropdown after selection
-};
+  };
 
   const handleImageError = (e) => {
     console.error('Image failed to load:', e.target.src);
     e.target.onerror = null;
-    e.target.src = '/path_to_default_image.jpg'; // Make sure this path is correct
+    e.target.src = '/path_to_default_image.jpg'; // Default image path
   };
 
   return (
     <div className="App">
-      <div className="header">
-        <img src="/path_to_your_logo.jpg" alt="Skinform logo" style={{ height: '50px' }} />
-        <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
-        <p>Search our analyzed products or paste any product's ingredients to check for pore-clogging ingredients.</p>
+      <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
+      <p>Search our analyzed products or paste any product's ingredients to check for pore-clogging ingredients.</p>
+      <div className="search-container">
+        <input
+          className="search-input"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search Products..."
+        />
+        {showDropdown && (
+          <div className="dropdown">
+            {recommendedProducts.map((product, index) => (
+              <div
+                key={index}
+                className="suggestion-item"
+                onClick={() => handleProductSelect(product)}
+              >
+                <img
+                  className="suggestion-image"
+                  src={product.image_url} // Make sure this is the correct property
+                  alt={product.name}
+                  onError={handleImageError}
+                />
+                <span>{highlightText(product.brand + ' - ' + (product.name || ''), searchTerm)}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    <div className="App">
-      <h1>Skincare Product Search</h1>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search Products..."
-      />
-
-      {showDropdown && (
-        <div className="dropdown">
-          {recommendedProducts.map((product, index) => (
-            <div key={index} className="suggestion-item" onClick={() => handleProductSelect(product)}>
-              <img 
-                src={product.image_url} 
-                alt={product.name} 
-                className="suggestion-image" 
-                onError={handleImageError}
-              />
-              <p className="suggestion-title">{product.brand} - {product.name}</p>
-            </div>
-          ))}
-        </div>
-      )}
 
       {selectedProduct && (
         <div className="product-detail">
-          <img 
-            src={selectedProduct.image_url} 
-            alt={selectedProduct.name} 
-            className="product-image" 
-            onError={handleImageError}
-          />
-          <div>
-            <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
-            <h3>Ingredients:</h3>
-            {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
-              <ul className="ingredients-list">
-                {selectedProduct.ingredients.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No ingredients information available.</p>
-            )}
-          </div>
+          <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+          <p className="product-description">Ingredients:</p>
+          {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+            <ul className="ingredients-list">
+              {selectedProduct.ingredients.map((ingredient, index) => (
+                <li key={index}>{ingredient}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No ingredients information available.</p>
+          )}
         </div>
       )}
     </div>
-  </div>
   );
 }
 

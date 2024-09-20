@@ -6,16 +6,17 @@
 .search-container {
   position: relative;
   margin: 20px auto;
-  width: 70%; /* Increased width for a larger search container */
+  width: 45%;
+  display: flex
 }
 
 .search-input {
   width: 100%;
-  padding: 12px 40px 12px 35px; /* Slightly reduced padding for a more moderate height */
-  font-size: 16px; /* Slightly smaller font size */
+  padding: 12px 40px 12px 35px;
+  font-size: 16px;
   border: 2px solid #ccc;
-  border-radius: 25px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Reduced shadow */
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .search-icon {
@@ -23,21 +24,32 @@
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #ccc;
-  font-size: 20px; /* Slightly smaller icon */
+  color: #755b5b;
+  font-size: 20px;
 }
 
 .dropdown {
-  width: 100%; /* Match the width of the search bar */
-  border: 1px solid #ccc;
-  padding: 10px;
-  position: absolute;
-  left: 0; /* Align with the left edge of the search bar */
-  z-index: 1000;
-  background-color: white;
-  max-height: 400px; /* Reduced max-height for a smaller dropdown */
-  overflow-y: auto; /* Changed to auto for scrolling if needed */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Added shadow for depth */
+  width: 92%;
+  border: 1px solid #ffffff;
+  padding: 20px;
+  position: absolute; /* Changed from 'center' to 'absolute' */
+  top: 100%;
+  z-index: 1050; /* Ensure it's high enough to be on top of other content */
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown .suggestion-item:last-child {
+  margin-bottom: 0; 
+}
+
+.suggestion-item {
+  text-align: left; 
+}
+
+.product-name {
+  text-align: left; 
 }
 
 .suggestion-item {
@@ -55,7 +67,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.product-image, .suggestion-image {
+.suggestion-image {
   width: 50px;
   height: 50px;
   margin-right: 10px;
@@ -63,12 +75,17 @@
 }
 
 .product-detail {
+  position: relative; /* Added to ensure proper stacking context */
   border: 1px solid #e1e1e1;
   padding: 20px;
   margin-top: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1000; /* Lower than dropdown for overlay effect */
 }
 
 .product-title {
