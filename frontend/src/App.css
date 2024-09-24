@@ -96,7 +96,9 @@
 }
 
 .product-title {
+  text-align: center;
   font-size: 24px;
+  margin-top: 20px;
   color: #333;
   margin-bottom: 10px;
 }
@@ -108,15 +110,25 @@
 }
 
 .ingredients-list {
-  list-style-type: none;
-  padding: 0;
+  -webkit-column-count: 2; /* Chrome, Safari, Opera */
+  -moz-column-count: 2;    /* Firefox */
+  column-count: 2;         /* standard syntax */
+
+  -webkit-column-gap: 20px; /* Chrome, Safari, Opera */
+  -moz-column-gap: 20px;    /* Firefox */
+  column-gap: 20px;         /* standard syntax */
+
+  list-style-type: none; /* Removes bullet points from the list */
+  padding: 0;            /* Removes padding around the list */
+
   font-size: 16px;
   line-height: 1.6;
 }
 
 .ingredients-list li {
-  margin: 5px 0;
+  text-align: center;
 }
+
 
 .ingredients-list li.pore-clogging {
   color: red;
