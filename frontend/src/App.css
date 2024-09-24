@@ -74,6 +74,13 @@
   border-radius: 5px;
 }
 
+.product-image {
+  width: 40%; /* Full width of the container */
+  height: auto; /* Adjust height automatically */
+  object-fit: contain; /* Ensures the entire image is visible within the bounding box */
+}
+
+
 .product-detail {
   position: relative; /* Added to ensure proper stacking context */
   border: 1px solid #e1e1e1;

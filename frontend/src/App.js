@@ -94,6 +94,12 @@ function App() {
 
       {selectedProduct && (
         <div className="product-detail">
+          <img
+            className="product-image"
+            src={selectedProduct.image_url}
+            alt={selectedProduct.name}
+            onError={handleImageError}
+          />  
           <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
           <p className="product-description">Ingredients:</p>
           {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
