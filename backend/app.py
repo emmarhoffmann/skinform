@@ -344,65 +344,42 @@ def normalize_ingredient(ingredient):
 normalized_pore_clogging = [normalize_ingredient(ing) for ing in pore_clogging_ingredients]
 
 def ingredient_matches(product_ingredient, pore_clogging_list):
-    """ Check if any normalized pore clogging ingredient matches words in the product ingredient. """
+    """Check if any normalized pore-clogging ingredient matches words in the product ingredient."""
     normalized_product_ingredient = normalize_ingredient(product_ingredient)
-    return any(normalized_clog <= normalized_product_ingredient for normalized_clog in pore_clogging_list)
+    return any(normalized_clog.issubset(normalized_product_ingredient) for normalized_clog in pore_clogging_list)
 
 # Example of using this in your Flask route
 # Modify the product_results append part to include a flag for each ingredient
 @app.route('/search-products', methods=['GET'])
 def search_products():
     search_term = request.args.get('name')
-    products = list(db.products.find({
-        "$or": [
-            {'name': {'$regex': search_term, '$options': 'i'}},
-            {'brand': {'$regex': search_term, '$options': 'i'}}
-        ]
-    }))
-
-    if products:
-        product_results = []
-        for product in products:
-            ingredients_info = []
-            for ingredient in product.get('ingredients', []):
-                normalized_ingredient = normalize_ingredient(ingredient)
-                is_pore_clogging = normalized_ingredient in normalized_pore_clogging
-                ingredients_info.append({
-                    'name': ingredient,
-                    'is_pore_clogging': is_pore_clogging
-                })
-            
-            product_results.append({
-                'name': product['name'],
-                'brand': product['brand'],
-                'product_category': product.get('product_category', ''),
-                'image_url': product.get('image_url', ''),
-                'ingredients': ingredients_info
-            })
-
-        return jsonify({'products': product_results})
-    else:
-        return jsonify({'products': []})
+    products = list(db.products.find({"name": {"$regex": search_term, "$options": 'i'}}))
+    return jsonify([{
+        "name": product["name"],
+        "brand": product.get("brand", "Unknown brand"),
+        "image_url": product.get("image_url", "default_image.jpg"),
+        "ingredients": product.get("ingredients", [])
+    } for product in products])
 
 # Recommended products route (if needed)
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
-    search_term = request.args.get('name')
-
-    # Find products with similar names or brands
+    search_term = request.args.get('name', '')
     recommended_products = db.products.find({
         "$or": [
-            {'name': {'$regex': search_term, '$options': 'i'}},
-            {'brand': {'$regex': search_term, '$options': 'i'}}
+            {'name': {'$regex': f'^{search_term}', '$options': 'i'}},
+            {'brand': {'$regex': f'^{search_term}', '$options': 'i'}}
         ]
-    }).limit(5)  # Limit to 5 recommended products
+    }).limit(5)
 
-    # Format recommended products
     recommendations = [{
         'name': product['name'],
         'brand': product['brand'],
-        'image_url': product.get('image_url', 'default_image.jpg'),  # Fallback if no image URL
-        'ingredients': product.get('ingredients', [])  # Ensure ingredients are included
+        'image_url': product.get('image_url', '/path_to_default_image.jpg'),
+        'ingredients': [{
+            'name': ing,
+            'is_pore_clogging': ingredient_matches(ing, normalized_pore_clogging)
+        } for ing in product.get('ingredients', [])]
     } for product in recommended_products]
 
     return jsonify(recommendations)

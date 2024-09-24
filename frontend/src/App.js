@@ -48,10 +48,30 @@ function App() {
   }, [searchTerm]);
 
   const handleProductSelect = (product) => {
+    console.log('Product selected:', product);  // Check the full product structure
     setSelectedProduct(product);
-    console.log('Selected product ingredients:', product.ingredients);
     setShowDropdown(false); // Hide dropdown after selection
   };
+  
+  useEffect(() => {
+    if (searchTerm) {
+      axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
+        .then(response => {
+          console.log('Fetched products:', response.data); // Log fetched data
+          const results = response.data; 
+          setRecommendedProducts(results);
+          setShowDropdown(results.length > 0); // Only show dropdown if there are results
+        })
+        .catch(error => {
+          console.error('Error fetching recommended products:', error);
+          setRecommendedProducts([]);
+          setShowDropdown(false); // Ensure dropdown is not shown on error
+        });
+    } else {
+      setRecommendedProducts([]);
+      setShowDropdown(false);
+    }
+  }, [searchTerm]);  
 
   const handleImageError = (e) => {
     console.error('Image failed to load:', e.target.src);
@@ -102,10 +122,12 @@ function App() {
           />  
           <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
           <p className="product-description">Ingredients:</p>
-          {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+          {selectedProduct && selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
             <ul className="ingredients-list">
               {selectedProduct.ingredients.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
+                <li key={index} style={{ color: ingredient.is_pore_clogging ? 'red' : 'inherit' }}>
+                  {ingredient.name}
+                </li>
               ))}
             </ul>
           ) : (
