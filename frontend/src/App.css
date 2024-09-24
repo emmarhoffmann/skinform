@@ -78,6 +78,8 @@
   width: 40%; /* Full width of the container */
   height: auto; /* Adjust height automatically */
   object-fit: contain; /* Ensures the entire image is visible within the bounding box */
+  border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
 
