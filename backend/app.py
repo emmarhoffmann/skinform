@@ -65,11 +65,11 @@ pore_clogging_ingredients = [
     "Cetearyl Alcohol + Ceteareth 20",
     "Cetyl Acetate",
     "Cetyl Alcohol",
-    "Chaetomorpha linum (aerea) cladophora radiosa",
+    "Chaetomorpha linum aerea cladophora radiosa",
     "Chlamydomonas reinhardtii extract",
     "Chlorella",
     "Chlorophyceae",
-    "Chondrus Crispus (aka Irish Moss or Carageenan Moss)",
+    "Chondrus Crispus",
     "Cladophora cf. subsimplex",
     "Cladosiphon okamuranus extract",
     "Coal Tar",
@@ -176,7 +176,8 @@ pore_clogging_ingredients = [
     "Kousou ekisu",
     "Laminaria",
     "Laminaria Digitata Extract",
-    "Laminaria Saccharina Extract (Laminaria Saccharine)",
+    "Laminaria Saccharine",
+    "Laminaria Saccharina Extract",
     "Lanolin acetate",
     "Lanolin alcohol acetate",
     "Lanolin polyoxyethylene ether",
@@ -344,13 +345,19 @@ def normalize_ingredient(ingredient):
 normalized_pore_clogging = [normalize_ingredient(ing) for ing in pore_clogging_ingredients]
 
 def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_list):
-    """Return a list of pore-clogging ingredients found in the product ingredient."""
+    """Return a list of pore-clogging ingredients found in the product ingredient, prioritizing longest match."""
     matches = []
     product_ingredient_lower = product_ingredient.lower()
-    for clogging_ingredient in pore_clogging_list:
+    
+    # Sort the pore-clogging list by length (longest first) to ensure specific matches first
+    sorted_pore_clogging_list = sorted(pore_clogging_list, key=lambda x: len(x), reverse=True)
+    
+    for clogging_ingredient in sorted_pore_clogging_list:
+        # Create a regex pattern to match the exact word boundaries for each ingredient
         pattern = r'\b' + re.escape(clogging_ingredient.lower()) + r'\b'
         if re.search(pattern, product_ingredient_lower):
             matches.append(clogging_ingredient)
+    
     return matches
 
 @app.route('/search-products', methods=['GET'])
