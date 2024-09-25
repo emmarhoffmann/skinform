@@ -52,6 +52,29 @@ function App() {
     setSelectedProduct(product);
     setShowDropdown(false); // Hide dropdown after selection
   };
+
+  function highlightPoreCloggingIngredients(ingredientName, matchingPoreCloggingIngredients) {
+    if (!matchingPoreCloggingIngredients || matchingPoreCloggingIngredients.length === 0) {
+      return ingredientName;
+    }
+  
+    const escapedIngredients = matchingPoreCloggingIngredients
+      .map(ingredient => ingredient.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .sort((a, b) => b.length - a.length);
+  
+    const regexPattern = escapedIngredients.join('|');
+    const regex = new RegExp(`(${regexPattern})`, 'gi');
+  
+    const parts = ingredientName.split(regex);
+  
+    return parts.map((part, index) => {
+      if (regex.test(part)) {
+        return <span key={index} style={{ color: 'red' }}>{part}</span>;
+      } else {
+        return part;
+      }
+    });
+  }
   
   useEffect(() => {
     if (searchTerm) {
@@ -125,8 +148,8 @@ function App() {
           {selectedProduct && selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
             <ul className="ingredients-list">
               {selectedProduct.ingredients.map((ingredient, index) => (
-                <li key={index} style={{ color: ingredient.is_pore_clogging ? 'red' : 'inherit' }}>
-                  {ingredient.name}
+                <li key={index}>
+                  {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
                 </li>
               ))}
             </ul>

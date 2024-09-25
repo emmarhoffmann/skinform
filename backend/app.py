@@ -343,13 +343,16 @@ def normalize_ingredient(ingredient):
 # Assuming your pore_clogging_ingredients list is already normalized
 normalized_pore_clogging = [normalize_ingredient(ing) for ing in pore_clogging_ingredients]
 
-def ingredient_matches(product_ingredient, pore_clogging_list):
-    """Check if any normalized pore-clogging ingredient matches words in the product ingredient."""
-    normalized_product_ingredient = normalize_ingredient(product_ingredient)
-    return any(normalized_clog.issubset(normalized_product_ingredient) for normalized_clog in pore_clogging_list)
+def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_list):
+    """Return a list of pore-clogging ingredients found in the product ingredient."""
+    matches = []
+    product_ingredient_lower = product_ingredient.lower()
+    for clogging_ingredient in pore_clogging_list:
+        pattern = r'\b' + re.escape(clogging_ingredient.lower()) + r'\b'
+        if re.search(pattern, product_ingredient_lower):
+            matches.append(clogging_ingredient)
+    return matches
 
-# Example of using this in your Flask route
-# Modify the product_results append part to include a flag for each ingredient
 @app.route('/search-products', methods=['GET'])
 def search_products():
     search_term = request.args.get('name')
@@ -378,7 +381,7 @@ def recommend_products():
         'image_url': product.get('image_url', '/path_to_default_image.jpg'),
         'ingredients': [{
             'name': ing,
-            'is_pore_clogging': ingredient_matches(ing, normalized_pore_clogging)
+            'matching_pore_clogging_ingredients': find_matching_pore_clogging_ingredients(ing, pore_clogging_ingredients)
         } for ing in product.get('ingredients', [])]
     } for product in recommended_products]
 
