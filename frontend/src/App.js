@@ -7,39 +7,33 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [loadingIngredients, setLoadingIngredients] = useState(false);
 
   function highlightText(fullText, searchTerm) {
-    // Guard clauses for empty inputs
     if (!fullText || !searchTerm) return fullText;
-  
-    // Trim and escape special characters in searchTerm to safely use in regex
+
     const escapedSearchTerm = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Regex to match each word in the search term separately
     const regexPattern = escapedSearchTerm.split(/\s+/).map(word => {
-      // Return pattern to match word at a word boundary or part of it
       return `(${word})`;
     }).join("|");
-  
+
     const regex = new RegExp(regexPattern, 'gi');
     const parts = fullText.split(regex);
-    
-    // Reconstruct the string with highlighted matches
-    return parts.map(part => regex.test(part) ? <strong>{part}</strong> : part);
+
+    return parts.map((part, index) => regex.test(part) ? <strong key={index}>{part}</strong> : part);
   }
-  
-  
-  
+
   useEffect(() => {
     if (searchTerm) {
       axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
         .then(response => {
           const results = response.data.slice(0, 5); // Limit to 5 products
           setRecommendedProducts(results);
-          setShowDropdown(results.length > 0); // Only show dropdown if there are results
+          setShowDropdown(results.length > 0);
         })
         .catch(() => {
           setRecommendedProducts([]);
-          setShowDropdown(false); // Ensure dropdown is not shown on error
+          setShowDropdown(false);
         });
     } else {
       setRecommendedProducts([]);
@@ -48,53 +42,51 @@ function App() {
   }, [searchTerm]);
 
   const handleProductSelect = (product) => {
-    console.log('Product selected:', product);  // Check the full product structure
+    console.log('Product selected:', product);  // This should show the full product structure
+    if (!product.name) {
+      console.error('Product name is undefined:', product);
+      return; // Stop further execution if no product name is available
+    }
+  
     setSelectedProduct(product);
-    setShowDropdown(false); // Hide dropdown after selection
+    setShowDropdown(false);
+    fetchProductIngredients(product.name); // Fetch ingredients by product name
+  };  
+
+  const fetchProductIngredients = (productName) => {
+    setLoadingIngredients(true);  // Set loading state
+    axios.get(`http://127.0.0.1:5000/product-ingredients/${encodeURIComponent(productName)}`)
+      .then(response => {
+        console.log("API Response:", response.data);  // Log the full API response
+        const updatedProduct = { ...selectedProduct, ...response.data };
+        setSelectedProduct(updatedProduct); // Update product with all data
+        setLoadingIngredients(false);  // Turn off loading
+      })
+      .catch(error => {
+        console.error('Error fetching product ingredients:', error);
+        setLoadingIngredients(false);  // Turn off loading even on error
+      });
   };
 
   function highlightPoreCloggingIngredients(ingredientName, matchingPoreCloggingIngredients) {
     if (!matchingPoreCloggingIngredients || matchingPoreCloggingIngredients.length === 0) {
       return ingredientName;
     }
-  
+
     const escapedIngredients = matchingPoreCloggingIngredients
       .map(ingredient => ingredient.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
       .sort((a, b) => b.length - a.length);
-  
+
     const regexPattern = escapedIngredients.join('|');
     const regex = new RegExp(`(${regexPattern})`, 'gi');
-  
+
     const parts = ingredientName.split(regex);
-  
-    return parts.map((part, index) => {
-      if (regex.test(part)) {
-        return <span key={index} style={{ color: 'red' }}>{part}</span>;
-      } else {
-        return part;
-      }
-    });
+
+    return parts.map((part, index) => regex.test(part) 
+      ? <span key={index} style={{ color: 'red' }}>{part}</span> 
+      : part
+    );
   }
-  
-  useEffect(() => {
-    if (searchTerm) {
-      axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
-        .then(response => {
-          console.log('Fetched products:', response.data); // Log fetched data
-          const results = response.data; 
-          setRecommendedProducts(results);
-          setShowDropdown(results.length > 0); // Only show dropdown if there are results
-        })
-        .catch(error => {
-          console.error('Error fetching recommended products:', error);
-          setRecommendedProducts([]);
-          setShowDropdown(false); // Ensure dropdown is not shown on error
-        });
-    } else {
-      setRecommendedProducts([]);
-      setShowDropdown(false);
-    }
-  }, [searchTerm]);  
 
   const handleImageError = (e) => {
     console.error('Image failed to load:', e.target.src);
@@ -124,7 +116,7 @@ function App() {
               >
                 <img
                   className="suggestion-image"
-                  src={product.image_url} // Make sure this is the correct property
+                  src={product.image_url}
                   alt={product.name}
                   onError={handleImageError}
                 />
@@ -136,25 +128,31 @@ function App() {
       </div>
 
       {selectedProduct && (
-        <div className="product-detail">
-          <img
+      <div className="product-detail">
+        <img
             className="product-image"
             src={selectedProduct.image_url}
             alt={selectedProduct.name}
             onError={handleImageError}
-          />  
-          <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
-          <p className="product-description">Ingredients:</p>
-          {selectedProduct && selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
-            <ul className="ingredients-list">
-              {selectedProduct.ingredients.map((ingredient, index) => (
-                <li key={index}>
-                  {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No ingredients information available.</p>
+        />
+        <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+        {loadingIngredients ? (
+            <p>Loading ingredients...</p>
+        ) : (
+            <>
+                <p className="product-description">Ingredients:</p>
+                {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+                    <ul className="ingredients-list">
+                        {selectedProduct.ingredients.map((ingredient, index) => (
+                            <li key={index}>
+                                {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No ingredients information available.</p>
+              )}
+            </>
           )}
         </div>
       )}

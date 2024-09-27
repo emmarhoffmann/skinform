@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
+from bson import binary
 import re
+import uuid
 import os
 from dotenv import load_dotenv
+from bson import ObjectId
+
 
 # Load environment variables
 load_dotenv()  # Ensure this is before accessing any environment variables
@@ -371,7 +375,6 @@ def search_products():
         "ingredients": product.get("ingredients", [])
     } for product in products])
 
-# Recommended products route
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
     search_term = request.args.get('name', '')
@@ -384,18 +387,50 @@ def recommend_products():
             {'brand': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start in brand
             {'brand': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}}    # Containing the term anywhere in brand
         ]},
-        {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}  # Only fetch necessary fields
+        {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}  # Fetch ingredients
     ).limit(5))  # Limit to 5 products only
 
-    # Format the response
+    # Prepare the response WITHOUT processing ingredients immediately
     recommendations = [{
         'name': product['name'],
         'brand': product.get('brand', 'Unknown brand'),
-        'image_url': product.get('image_url', 'default_image.jpg'),  # Fallback if no image URL
-        'ingredients': product.get('ingredients', [])  # Ensure ingredients are included
+        'image_url': product.get('image_url', 'default_image.jpg'),
     } for product in recommended_products]
 
     return jsonify(recommendations)
+
+# Route to fetch product ingredients using the product's name
+@app.route('/product-ingredients/<product_name>', methods=['GET'])
+def get_product_ingredients(product_name):
+    try:
+        # Fetch the product by name with a case-insensitive search and include all required fields
+        product = db.products.find_one(
+            {'name': {'$regex': f'^{re.escape(product_name)}$', '$options': 'i'}},
+            {'ingredients': 1, 'name': 1, 'image_url': 1, 'brand': 1}  # Fetching name, image_url, brand, and ingredients
+        )
+        
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+
+        # Construct the response including all the required details
+        response = {
+            'name': product['name'],
+            'brand': product.get('brand', 'Unknown brand'),  # Provide a default if the brand isn't specified
+            'image_url': product.get('image_url', 'default_image.jpg'),  # Provide a default image if none exists
+            'ingredients': [
+                {
+                    'name': ing,
+                    'matching_pore_clogging_ingredients': find_matching_pore_clogging_ingredients(ing, pore_clogging_ingredients)
+                } for ing in product.get('ingredients', [])
+            ]
+        }
+
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
