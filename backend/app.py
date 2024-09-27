@@ -371,25 +371,27 @@ def search_products():
         "ingredients": product.get("ingredients", [])
     } for product in products])
 
+
 # Recommended products route (if needed)
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
     search_term = request.args.get('name', '')
-    recommended_products = db.products.find({
-        "$or": [
-            {'name': {'$regex': f'^{search_term}', '$options': 'i'}},
-            {'brand': {'$regex': f'^{search_term}', '$options': 'i'}}
-        ]
-    }).limit(5)
 
+    # Ensure you're only searching in the relevant fields with appropriate limits
+    recommended_products = list(db.products.find(
+        {'$or': [
+            {'name': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start
+            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}}   # Containing the term anywhere
+        ]},
+        {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}  # Only fetch necessary fields
+    ).limit(5))  # Limit to 5 products only
+
+    # Format the response
     recommendations = [{
         'name': product['name'],
-        'brand': product['brand'],
-        'image_url': product.get('image_url', '/path_to_default_image.jpg'),
-        'ingredients': [{
-            'name': ing,
-            'matching_pore_clogging_ingredients': find_matching_pore_clogging_ingredients(ing, pore_clogging_ingredients)
-        } for ing in product.get('ingredients', [])]
+        'brand': product.get('brand', 'Unknown brand'),
+        'image_url': product.get('image_url', 'default_image.jpg'),  # Fallback if no image URL
+        'ingredients': product.get('ingredients', [])  # Ensure ingredients are included
     } for product in recommended_products]
 
     return jsonify(recommendations)
