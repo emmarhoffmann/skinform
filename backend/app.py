@@ -371,17 +371,18 @@ def search_products():
         "ingredients": product.get("ingredients", [])
     } for product in products])
 
-
-# Recommended products route (if needed)
+# Recommended products route
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
     search_term = request.args.get('name', '')
 
-    # Ensure you're only searching in the relevant fields with appropriate limits
+    # Search both 'name' and 'brand' fields for the search term
     recommended_products = list(db.products.find(
         {'$or': [
-            {'name': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start
-            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}}   # Containing the term anywhere
+            {'name': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start in name
+            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},   # Containing the term anywhere in name
+            {'brand': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start in brand
+            {'brand': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}}    # Containing the term anywhere in brand
         ]},
         {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}  # Only fetch necessary fields
     ).limit(5))  # Limit to 5 products only
