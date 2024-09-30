@@ -13,7 +13,7 @@ This project provides a tool for users to identify potential pore-clogging ingre
 
 ## To-Do List
 
-- **Update search functionality**: Make it more flowy and less glitchy, similar to Sephora's search function.
+- ~~**Update search functionality**: Make it more flowy and less glitchy, similar to Sephora's search function.~~
 - **Test products**: Test products thoroughly for issues.
 - **UI design adjustments**: Alter the current UI based on the wireframe.
 - **Implement ingredient checker**: Add functionality to check user pasted ingredients.
