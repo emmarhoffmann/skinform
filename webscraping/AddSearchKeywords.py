@@ -2,7 +2,7 @@ from pymongo import MongoClient, UpdateOne
 import re
 
 # Connect to MongoDB
-client = MongoClient('mongodb+srv://erhoffmann128:Rushlake12!!@skinform.coz0o.mongodb.net/?retryWrites=true&w=majority&appName=skinform') # Paste in connection string
+client = MongoClient('') # Paste in connection string
 db = client['skinform'] 
 collection = db['products']
 
