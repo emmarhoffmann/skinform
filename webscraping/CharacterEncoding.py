@@ -3,7 +3,7 @@ import html
 import sys
 
 # Connect to MongoDB
-client = MongoClient('')
+client = MongoClient('') # Paste in connection string
 db = client['skinform'] 
 collection = db['products'] 
 

@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import binary
+from unidecode import unidecode
 import re
 import uuid
 import os
@@ -341,6 +342,12 @@ pore_clogging_ingredients = [
 def home():
     return "Welcome to the Skincare Platform API!"
 
+def normalize_text(text):
+    """Normalize text by removing special characters and accents."""
+    text = unidecode(text.lower())  # Normalize accents and case
+    text = re.sub(r'[^a-z0-9\s]', ' ', text)  # Remove special characters
+    return ' '.join(text.split())  # Remove extra spaces
+
 def normalize_ingredient(ingredient):
     """ Normalize ingredients by converting to lowercase and splitting into words. """
     return set(re.sub(r'\W+', ' ', ingredient.lower()).split())
@@ -366,8 +373,15 @@ def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_li
 
 @app.route('/search-products', methods=['GET'])
 def search_products():
-    search_term = request.args.get('name')
-    products = list(db.products.find({"name": {"$regex": search_term, "$options": 'i'}}))
+    search_term = request.args.get('name', '')
+    normalized_search = normalize_text(search_term)  # Normalize the input for searching
+    # Search in both original and normalized fields
+    products = list(db.products.find({
+        '$or': [
+            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},
+            {'normalized_name': {'$regex': f'{re.escape(normalized_search)}', '$options': 'i'}}
+        ]
+    }))
     return jsonify([{
         "name": product["name"],
         "brand": product.get("brand", "Unknown brand"),
@@ -378,19 +392,17 @@ def search_products():
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
     search_term = request.args.get('name', '')
+    normalized_search = normalize_text(search_term)
+    # Include both normalized and original fields in search criteria
+    recommended_products = list(db.products.find({
+        '$or': [
+            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},
+            {'normalized_name': {'$regex': f'{re.escape(normalized_search)}', '$options': 'i'}},
+            {'brand': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},
+            {'normalized_brand': {'$regex': f'{re.escape(normalized_search)}', '$options': 'i'}}
+        ]
+    }, {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}).limit(5))
 
-    # Search both 'name' and 'brand' fields for the search term
-    recommended_products = list(db.products.find(
-        {'$or': [
-            {'name': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start in name
-            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},   # Containing the term anywhere in name
-            {'brand': {'$regex': f'^{re.escape(search_term)}', '$options': 'i'}},  # Exact match at the start in brand
-            {'brand': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}}    # Containing the term anywhere in brand
-        ]},
-        {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}  # Fetch ingredients
-    ).limit(5))  # Limit to 5 products only
-
-    # Prepare the response WITHOUT processing ingredients immediately
     recommendations = [{
         'name': product['name'],
         'brand': product.get('brand', 'Unknown brand'),
@@ -429,8 +441,6 @@ def get_product_ingredients(product_name):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
