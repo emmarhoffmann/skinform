@@ -375,13 +375,18 @@ def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_li
 def search_products():
     search_term = request.args.get('name', '')
     normalized_search = normalize_text(search_term)  # Normalize the input for searching
-    # Search in both original and normalized fields
+
+    # Split the search term into individual words
+    search_words = normalized_search.split()
+
+    # Create regex patterns for each search word and combine with $and so all terms must match
+    regex_queries = [{'search_keywords': {'$regex': re.escape(word), '$options': 'i'}} for word in search_words]
+
+    # Perform the query, ensuring all search terms are found in the search_keywords field
     products = list(db.products.find({
-        '$or': [
-            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},
-            {'normalized_name': {'$regex': f'{re.escape(normalized_search)}', '$options': 'i'}}
-        ]
+        '$and': regex_queries
     }))
+    
     return jsonify([{
         "name": product["name"],
         "brand": product.get("brand", "Unknown brand"),
@@ -392,16 +397,18 @@ def search_products():
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
     search_term = request.args.get('name', '')
-    normalized_search = normalize_text(search_term)
-    # Include both normalized and original fields in search criteria
+    normalized_search = normalize_text(search_term)  # Normalize the input for searching
+
+    # Split the search term into individual words
+    search_words = normalized_search.split()
+
+    # Create regex patterns for each search word and combine with $and so all terms must match
+    regex_queries = [{'search_keywords': {'$regex': re.escape(word), '$options': 'i'}} for word in search_words]
+
+    # Perform the query, ensuring all search terms are found in the search_keywords field
     recommended_products = list(db.products.find({
-        '$or': [
-            {'name': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},
-            {'normalized_name': {'$regex': f'{re.escape(normalized_search)}', '$options': 'i'}},
-            {'brand': {'$regex': f'{re.escape(search_term)}', '$options': 'i'}},
-            {'normalized_brand': {'$regex': f'{re.escape(normalized_search)}', '$options': 'i'}}
-        ]
-    }, {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}).limit(5))
+        '$and': regex_queries
+    }, {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}).limit(5))  # Limit results to 5
 
     recommendations = [{
         'name': product['name'],
@@ -441,6 +448,28 @@ def get_product_ingredients(product_name):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Route to check ingredients for user input ingredients
+@app.route('/check-ingredients', methods=['POST'])
+def check_ingredients():
+    data = request.get_json()
+    pasted_ingredients = data.get('ingredients', '')
+
+    # Split pasted ingredients by commas or newlines
+    ingredient_list = re.split(r',|\n', pasted_ingredients)
+
+    # Normalize and find matching pore-clogging ingredients
+    results = []
+    for ingredient in ingredient_list:
+        ingredient = ingredient.strip()
+        matching_pore_clogging = find_matching_pore_clogging_ingredients(ingredient, pore_clogging_ingredients)
+        results.append({
+            'name': ingredient,
+            'isPoreClogging': bool(matching_pore_clogging)
+        })
+
+    return jsonify(results)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

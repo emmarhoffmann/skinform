@@ -9,6 +9,9 @@ function App() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [loadingIngredients, setLoadingIngredients] = useState(false);
 
+  const [pastedIngredients, setPastedIngredients] = useState('');
+  const [poreCloggingResults, setPoreCloggingResults] = useState([]);
+
   function highlightText(fullText, searchTerm) {
     if (!fullText || !searchTerm) return fullText;
 
@@ -67,6 +70,21 @@ function App() {
         setLoadingIngredients(false);  // Turn off loading even on error
       });
   };
+
+  const checkPoreCloggingIngredients = () => {
+    if (!pastedIngredients.trim()) {
+      return;
+    }
+  
+    axios.post('http://127.0.0.1:5000/check-ingredients', { ingredients: pastedIngredients })
+      .then(response => {
+        setPoreCloggingResults(response.data);
+      })
+      .catch(error => {
+        console.error('Error checking ingredients:', error);
+      });
+  };
+  
 
   function highlightPoreCloggingIngredients(ingredientName, matchingPoreCloggingIngredients) {
     if (!matchingPoreCloggingIngredients || matchingPoreCloggingIngredients.length === 0) {
@@ -156,6 +174,32 @@ function App() {
           )}
         </div>
       )}
+
+
+      <div className="ingredient-checker">
+        <h2>Ingredient Checker</h2>
+        <textarea
+          value={pastedIngredients}
+          onChange={(e) => setPastedIngredients(e.target.value)}
+          placeholder="Paste Ingredients"
+          className="pasted-ingredients"
+        />
+        <div>
+          <button onClick={checkPoreCloggingIngredients}>Check</button>
+          <button onClick={() => setPastedIngredients('')}>Clear</button>
+        </div>
+
+        {poreCloggingResults.length > 0 && (
+          <ul className="pore-clogging-results">
+            {poreCloggingResults.map((ingredient, index) => (
+              <li key={index} style={{ color: ingredient.isPoreClogging ? 'red' : 'black' }}>
+                {ingredient.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      
     </div>
   );
 }
