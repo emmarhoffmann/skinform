@@ -169,7 +169,7 @@
 /* Styling for the textarea */
 .pasted-ingredients {
   width: 100%;
-  height: 120px; /* Fixed height */
+  height: 160px; /* Fixed height */
   padding: 12px 40px 12px 35px;
   font-size: 16px;
   border: 2px solid #ccc;
@@ -180,6 +180,7 @@
   position: relative;
   overflow: auto;
 }
+
 
 /* Custom scrollbar styles */
 .pasted-ingredients::-webkit-scrollbar {
@@ -224,30 +225,33 @@
 
 /* Container for the results */
 .pore-clogging-results {
+  width: 100%;          /* Full width */
+  max-width: 900px;      /* Optional: Limit the width */
+  margin-left: auto;     /* Center the container */
+  margin-right: auto;    /* Center the container */
   border: 1px solid #e1e1e1;
   padding: 20px;
-  margin-top: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  width: 100%; /* Full width like the product detail */
-  margin-left: auto;
-  margin-right: auto;
-  z-index: 1000; /* Lower than dropdown for overlay effect */
+  overflow: auto;        /* Scroll content if it exceeds the container height */
+  min-height: 400px;     /* Ensures a minimum height */
+  display: block;
 }
 
-/* Ingredients list styling */
+/* Ensure the ingredients list inside the bottom box is formatted properly */
 .pore-clogging-results ul.ingredients-list {
   -webkit-column-count: 2; /* Chrome, Safari, Opera */
   -moz-column-count: 2;    /* Firefox */
-  column-count: 2;         /* standard syntax */
+  column-count: 2;         /* Standard syntax */
   -webkit-column-gap: 20px; /* Chrome, Safari, Opera */
   -moz-column-gap: 20px;    /* Firefox */
-  column-gap: 20px;         /* standard syntax */
-  list-style-type: none; /* Removes bullet points from the list */
-  padding: 0;            /* Removes padding around the list */
+  column-gap: 20px;         /* Standard syntax */
+  list-style-type: none;    /* Removes bullet points */
+  padding: 0;              /* Removes padding around the list */
   font-size: 16px;
   line-height: 1.6;
+  width: 100%;  /* Ensure the list takes the full width */
 }
 
 /* Center align the list items */

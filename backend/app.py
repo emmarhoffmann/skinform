@@ -455,21 +455,21 @@ def check_ingredients():
     data = request.get_json()
     pasted_ingredients = data.get('ingredients', '')
 
-    # Split pasted ingredients by commas or newlines
-    ingredient_list = re.split(r',|\n', pasted_ingredients)
+    # Process the pasted ingredients the same way as they are processed in the DB (split by commas, newlines, or multiple spaces)
+    ingredient_list = re.split(r'[,\n]+|\s{2,}', pasted_ingredients)
 
-    # Normalize and find matching pore-clogging ingredients
     results = []
     for ingredient in ingredient_list:
         ingredient = ingredient.strip()
-        matching_pore_clogging = find_matching_pore_clogging_ingredients(ingredient, pore_clogging_ingredients)
-        results.append({
-            'name': ingredient,
-            'isPoreClogging': bool(matching_pore_clogging)
-        })
-
+        if ingredient:  # Ensure no empty strings are processed
+            matching_pore_clogging = find_matching_pore_clogging_ingredients(ingredient, pore_clogging_ingredients)
+            results.append({
+                'name': ingredient,
+                'matching_pore_clogging_ingredients': matching_pore_clogging,
+                'isPoreClogging': bool(matching_pore_clogging)
+            })
+    
     return jsonify(results)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

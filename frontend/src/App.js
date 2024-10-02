@@ -174,8 +174,6 @@ function App() {
           )}
         </div>
       )}
-
-
       <div className="ingredient-checker">
         <h2>Ingredient Checker</h2>
         <textarea
@@ -192,9 +190,9 @@ function App() {
             <div className="pore-clogging-results">
             <ul className="ingredients-list">
               {poreCloggingResults.map((ingredient, index) => (
-                <li key={index} className={ingredient.isPoreClogging ? 'pore-clogging' : ''}>
-                  {ingredient.name}
-                </li>
+                <li key={index}>
+                {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+              </li>
               ))}
             </ul>
           </div>
