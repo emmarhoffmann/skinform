@@ -188,18 +188,18 @@ function App() {
           <button onClick={checkPoreCloggingIngredients}>Check</button>
           <button onClick={() => setPastedIngredients('')}>Clear</button>
         </div>
-
         {poreCloggingResults.length > 0 && (
-          <ul className="pore-clogging-results">
-            {poreCloggingResults.map((ingredient, index) => (
-              <li key={index} style={{ color: ingredient.isPoreClogging ? 'red' : 'black' }}>
-                {ingredient.name}
-              </li>
-            ))}
-          </ul>
+            <div className="pore-clogging-results">
+            <ul className="ingredients-list">
+              {poreCloggingResults.map((ingredient, index) => (
+                <li key={index} className={ingredient.isPoreClogging ? 'pore-clogging' : ''}>
+                  {ingredient.name}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
-      
     </div>
   );
 }

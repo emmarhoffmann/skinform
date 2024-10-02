@@ -3,6 +3,10 @@
   font-family: 'Arial', sans-serif;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .search-container {
   position: relative;
   margin: 20px auto;
@@ -134,26 +138,123 @@
 
 .ingredients-list li.pore-clogging {
   color: red;
-  font-weight: bold;
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Styling for Ingredient Checker */
 .ingredient-checker {
-  margin-top: 20px;
+  margin-top: 40px;
+  width: 45%; /* Matches the width of the product search box */
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Styling for the textarea */
 .pasted-ingredients {
   width: 100%;
-  height: 100px;
-  margin-bottom: 10px;
-}
-
-.pore-clogging-results {
-  list-style: none;
-  padding: 0;
-}
-
-.pore-clogging-results li {
+  height: 120px; /* Fixed height */
+  padding: 12px 40px 12px 35px;
   font-size: 16px;
-  margin: 5px 0;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  resize: none; /* Disable resizing */
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  overflow: auto;
+}
+
+/* Custom scrollbar styles */
+.pasted-ingredients::-webkit-scrollbar {
+  width: 12px;
+}
+
+.pasted-ingredients::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 20px 20px 0;
+}
+
+.pasted-ingredients::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+  border: 3px solid #f1f1f1;
+}
+
+.pasted-ingredients::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Styling for Check and Clear Buttons */
+.ingredient-checker button {
+  background-color: #707070; 
+  color: white;
+  padding: 12px 30px; /* Bigger buttons */
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.ingredient-checker button:hover {
+  background-color: #656565;
+}
+
+.ingredient-checker button:active {
+  background-color: #505050;
+}
+
+/* Container for the results */
+.pore-clogging-results {
+  border: 1px solid #e1e1e1;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%; /* Full width like the product detail */
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1000; /* Lower than dropdown for overlay effect */
+}
+
+/* Ingredients list styling */
+.pore-clogging-results ul.ingredients-list {
+  -webkit-column-count: 2; /* Chrome, Safari, Opera */
+  -moz-column-count: 2;    /* Firefox */
+  column-count: 2;         /* standard syntax */
+  -webkit-column-gap: 20px; /* Chrome, Safari, Opera */
+  -moz-column-gap: 20px;    /* Firefox */
+  column-gap: 20px;         /* standard syntax */
+  list-style-type: none; /* Removes bullet points from the list */
+  padding: 0;            /* Removes padding around the list */
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Center align the list items */
+.pore-clogging-results li {
+  text-align: center;
+}
+
+.pore-clogging-results li.pore-clogging {
+  color: red;
 }
