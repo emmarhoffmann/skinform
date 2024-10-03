@@ -235,7 +235,6 @@
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   overflow: auto;        /* Scroll content if it exceeds the container height */
-  min-height: 400px;     /* Ensures a minimum height */
   display: block;
 }
 
