@@ -147,6 +147,7 @@ function App() {
 
       {selectedProduct && (
       <div className="product-detail">
+        <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button> 
         <img
             className="product-image"
             src={selectedProduct.image_url}
@@ -187,12 +188,18 @@ function App() {
           <button onClick={() => setPastedIngredients('')}>Clear</button>
         </div>
         {poreCloggingResults.length > 0 && (
-            <div className="pore-clogging-results">
+          <div className="pore-clogging-results">
+            <button 
+              className="close-checker-button" 
+              onClick={() => {
+                setPoreCloggingResults([]); 
+              }}
+            >&times;</button> 
             <ul className="ingredients-list">
               {poreCloggingResults.map((ingredient, index) => (
                 <li key={index}>
-                {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
-              </li>
+                  {ingredient?.name ? highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients) : 'Unknown Ingredient'}
+                </li>
               ))}
             </ul>
           </div>

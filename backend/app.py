@@ -352,7 +352,7 @@ def normalize_ingredient(ingredient):
     """ Normalize ingredients by converting to lowercase and splitting into words. """
     return set(re.sub(r'\W+', ' ', ingredient.lower()).split())
 
-# Assuming your pore_clogging_ingredients list is already normalized
+# Assuming pore_clogging_ingredients list is already normalized
 normalized_pore_clogging = [normalize_ingredient(ing) for ing in pore_clogging_ingredients]
 
 def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_list):
