@@ -292,3 +292,44 @@
   color: #333;
   background: none;
 }
+
+
+
+
+
+.info-section h2 {
+  margin-bottom: 15px;
+}
+
+.info-section p {
+  margin-bottom: 10px;
+  padding: 0 10%;
+  line-height: 1.5;
+  text-align: justify;
+}
+
+.pore-clogging-list-section {
+  margin-bottom: 20px;
+  padding: 10px 5%;
+}
+
+.pore-clogging-list-section .ingredients-list {
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  column-gap: 20px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pore-clogging-list-section .ingredients-list li {
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.pore-clogging-list-section p {
+  margin-top: 10px;
+  text-align: center;
+}
+

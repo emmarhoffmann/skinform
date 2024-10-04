@@ -11,7 +11,9 @@ function App() {
 
   const [pastedIngredients, setPastedIngredients] = useState('');
   const [poreCloggingResults, setPoreCloggingResults] = useState([]);
+  const [poreCloggingIngredients, setPoreCloggingIngredients] = useState([]);
 
+  // Highlighting search term in product
   function highlightText(fullText, searchTerm) {
     if (!fullText || !searchTerm) return fullText;
 
@@ -25,6 +27,17 @@ function App() {
 
     return parts.map((part, index) => regex.test(part) ? <strong key={index}>{part}</strong> : part);
   }
+
+  // Fetch the pore-clogging ingredients when the component mounts
+  useEffect(() => {
+    axios.get('http://127.0.0.1:5000/pore-clogging-ingredients')
+      .then(response => {
+        setPoreCloggingIngredients(response.data); // Set the ingredients in state
+      })
+      .catch(error => {
+        console.error('Error fetching pore-clogging ingredients:', error);
+      });
+  }, []);
 
   useEffect(() => {
     if (searchTerm) {
@@ -45,37 +58,28 @@ function App() {
   }, [searchTerm]);
 
   const handleProductSelect = (product) => {
-    console.log('Product selected:', product);  // This should show the full product structure
-    if (!product.name) {
-      console.error('Product name is undefined:', product);
-      return; // Stop further execution if no product name is available
-    }
-  
     setSelectedProduct(product);
     setShowDropdown(false);
     fetchProductIngredients(product.name); // Fetch ingredients by product name
-  };  
+  };
 
   const fetchProductIngredients = (productName) => {
-    setLoadingIngredients(true);  // Set loading state
+    setLoadingIngredients(true);
     axios.get(`http://127.0.0.1:5000/product-ingredients/${encodeURIComponent(productName)}`)
       .then(response => {
-        console.log("API Response:", response.data);  // Log the full API response
         const updatedProduct = { ...selectedProduct, ...response.data };
-        setSelectedProduct(updatedProduct); // Update product with all data
-        setLoadingIngredients(false);  // Turn off loading
+        setSelectedProduct(updatedProduct);
+        setLoadingIngredients(false);
       })
       .catch(error => {
         console.error('Error fetching product ingredients:', error);
-        setLoadingIngredients(false);  // Turn off loading even on error
+        setLoadingIngredients(false);
       });
   };
 
   const checkPoreCloggingIngredients = () => {
-    if (!pastedIngredients.trim()) {
-      return;
-    }
-  
+    if (!pastedIngredients.trim()) return;
+
     axios.post('http://127.0.0.1:5000/check-ingredients', { ingredients: pastedIngredients })
       .then(response => {
         setPoreCloggingResults(response.data);
@@ -84,7 +88,6 @@ function App() {
         console.error('Error checking ingredients:', error);
       });
   };
-  
 
   function highlightPoreCloggingIngredients(ingredientName, matchingPoreCloggingIngredients) {
     if (!matchingPoreCloggingIngredients || matchingPoreCloggingIngredients.length === 0) {
@@ -100,111 +103,137 @@ function App() {
 
     const parts = ingredientName.split(regex);
 
-    return parts.map((part, index) => regex.test(part) 
-      ? <span key={index} style={{ color: 'red' }}>{part}</span> 
+    return parts.map((part, index) => regex.test(part)
+      ? <span key={index} style={{ color: 'red' }}>{part}</span>
       : part
     );
   }
 
   const handleImageError = (e) => {
-    console.error('Image failed to load:', e.target.src);
     e.target.onerror = null;
     e.target.src = '/path_to_default_image.jpg'; // Default image path
   };
 
   return (
     <div className="App">
+      {/* Main Title and Description */}
       <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
-      <p>Search our analyzed products or paste any product's ingredients to check for pore-clogging ingredients.</p>
-      <div className="search-container">
-        <input
-          className="search-input"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search Products..."
-        />
-        {showDropdown && (
-          <div className="dropdown">
-            {recommendedProducts.map((product, index) => (
-              <div
-                key={index}
-                className="suggestion-item"
-                onClick={() => handleProductSelect(product)}
-              >
-                <img
-                  className="suggestion-image"
-                  src={product.image_url}
-                  alt={product.name}
-                  onError={handleImageError}
-                />
-                <span>{highlightText(product.brand + ' - ' + (product.name || ''), searchTerm)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <p>Search our database of products or paste any product’s ingredients to check for pore-clogging ingredients.</p>
+
+      {/* Product Search Section */}
+      <section className="product-search-section">
+        <h2>Product Search</h2>
+        <p>Search our Database of Products</p>
+        <div className="search-container">
+          <input
+            className="search-input"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search Products..."
+          />
+          {showDropdown && (
+            <div className="dropdown">
+              {recommendedProducts.map((product, index) => (
+                <div
+                  key={index}
+                  className="suggestion-item"
+                  onClick={() => handleProductSelect(product)}
+                >
+                  <img
+                    className="suggestion-image"
+                    src={product.image_url}
+                    alt={product.name}
+                    onError={handleImageError}
+                  />
+                  <span>{highlightText(product.brand + ' - ' + (product.name || ''), searchTerm)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       {selectedProduct && (
-      <div className="product-detail">
-        <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button> 
-        <img
+        <div className="product-detail">
+          <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+          <img
             className="product-image"
             src={selectedProduct.image_url}
             alt={selectedProduct.name}
             onError={handleImageError}
-        />
-        <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
-        {loadingIngredients ? (
+          />
+          <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+          {loadingIngredients ? (
             <p>Loading ingredients...</p>
-        ) : (
+          ) : (
             <>
-                <p className="product-description">Ingredients:</p>
-                {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
-                    <ul className="ingredients-list">
-                        {selectedProduct.ingredients.map((ingredient, index) => (
-                            <li key={index}>
-                                {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No ingredients information available.</p>
+              <p className="product-description">Ingredients:</p>
+              {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+                <ul className="ingredients-list">
+                  {selectedProduct.ingredients.map((ingredient, index) => (
+                    <li key={index}>
+                      {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No ingredients information available.</p>
               )}
             </>
           )}
         </div>
       )}
-      <div className="ingredient-checker">
+
+      {/* Ingredient Checker Section */}
+      <section className="ingredient-checker-section">
         <h2>Ingredient Checker</h2>
-        <textarea
-          value={pastedIngredients}
-          onChange={(e) => setPastedIngredients(e.target.value)}
-          placeholder="Paste Ingredients"
-          className="pasted-ingredients"
-        />
-        <div>
-          <button onClick={checkPoreCloggingIngredients}>Check</button>
-          <button onClick={() => setPastedIngredients('')}>Clear</button>
-        </div>
-        {poreCloggingResults.length > 0 && (
-          <div className="pore-clogging-results">
-            <button 
-              className="close-checker-button" 
-              onClick={() => {
-                setPoreCloggingResults([]); 
-              }}
-            >&times;</button> 
-            <ul className="ingredients-list">
-              {poreCloggingResults.map((ingredient, index) => (
-                <li key={index}>
-                  {ingredient?.name ? highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients) : 'Unknown Ingredient'}
-                </li>
-              ))}
-            </ul>
+        <p>Check Any Product’s Ingredient List</p>
+        <div className="ingredient-checker">
+          <textarea
+            value={pastedIngredients}
+            onChange={(e) => setPastedIngredients(e.target.value)}
+            placeholder="Paste Ingredients"
+            className="pasted-ingredients"
+          />
+          <div>
+            <button onClick={checkPoreCloggingIngredients}>Check</button>
+            <button onClick={() => setPastedIngredients('')}>Clear</button>
           </div>
-        )}
-      </div>
+          {poreCloggingResults.length > 0 && (
+            <div className="pore-clogging-results">
+              <button className="close-checker-button" onClick={() => setPoreCloggingResults([])}>&times;</button>
+              <ul className="ingredients-list">
+                {poreCloggingResults.map((ingredient, index) => (
+                  <li key={index}>
+                    {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Informational Section */}
+      <section className="info-section">
+        <h2>Identify Pore-Clogging Ingredients in Your Everyday Products</h2>
+        <p>Take control of your skincare with our tool, designed to identify pore-clogging ingredients in your favorite products. From skincare and makeup to haircare and body washes, our extensive database covers a wide variety of products, each carefully analyzed for potential breakout-causing ingredients. You can easily search for products or paste any ingredient list for instant analysis. Even products labeled as "non-comedogenic" or "oil-free" may contain problematic ingredients, as these claims aren't always regulated. With our tool, you can make confident decisions, reduce irritants, and refine your product selection for healthier results.</p>
+        <p>Our database was last updated on [Date]. Please note that product formulations may change over time, and it's always a good idea to verify the ingredient list directly from the product packaging to ensure it hasn't been reformulated since our last update.</p>
+      </section>
+
+      {/* Pore-Clogging Ingredients List Section */}
+      <section className="pore-clogging-list-section">
+        <h2>Pore-Clogging Ingredients List</h2>
+        <div className="pore-clogging-list">
+          <ul className="ingredients-list">
+            {poreCloggingIngredients.map((ingredient, index) => (
+              <li key={index}>{ingredient}</li>  // Display each ingredient
+            ))}
+          </ul>
+        </div>
+        <p>Courtesy of acneclinicnyc.com</p>
+      </section>
     </div>
   );
 }

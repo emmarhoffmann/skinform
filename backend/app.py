@@ -342,6 +342,10 @@ pore_clogging_ingredients = [
 def home():
     return "Welcome to the Skincare Platform API!"
 
+@app.route('/pore-clogging-ingredients', methods=['GET'])
+def get_pore_clogging_ingredients():
+    return jsonify(pore_clogging_ingredients)
+
 def normalize_text(text):
     """Normalize text by removing special characters and accents."""
     text = unidecode(text.lower())  # Normalize accents and case
