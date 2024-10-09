@@ -218,8 +218,9 @@ function App() {
       {/* Informational Section */}
       <section className="info-section">
         <h2>Identify Pore-Clogging Ingredients in Your Everyday Products</h2>
-        <p>Take control of your skincare with our tool, designed to identify pore-clogging ingredients in your favorite products. From skincare and makeup to haircare and body washes, our extensive database covers a wide variety of products, each carefully analyzed for potential breakout-causing ingredients. You can easily search for products or paste any ingredient list for instant analysis. Even products labeled as "non-comedogenic" or "oil-free" may contain problematic ingredients, as these claims aren't always regulated. With our tool, you can make confident decisions, reduce irritants, and refine your product selection for healthier results.</p>
-        <p>Our database was last updated on [Date]. Please note that product formulations may change over time, and it's always a good idea to verify the ingredient list directly from the product packaging to ensure it hasn't been reformulated since our last update.</p>
+        <p>Take control of your skincare with our tool, designed to identify pore-clogging ingredients in your favorite products. From skincare and makeup to haircare and body washes, our extensive database covers a wide variety of products, each carefully analyzed for potential breakout-causing ingredients. You can easily search for products or paste any ingredient list for instant analysis. Even products labeled as "non-comedogenic" or "oil-free" may contain problematic ingredients, as these claims aren't always regulated. With our tool, you can reduce irritants and refine your product selection for healthier results.</p>
+        <p>Our database was last updated on 9/19/2024. Please note that product formulations may change over time, and it's always a good idea to verify the ingredient list directly from the product packaging to ensure it hasn't been reformulated since our last update.</p>
+        <p>The impact of a pore-clogging ingredient on skin varies between individuals. Ingredients that cause issues for some may not affect others in the same way.</p>
       </section>
 
       {/* Pore-Clogging Ingredients List Section */}

@@ -33,7 +33,7 @@
 }
 
 .dropdown {
-  width: 92%;
+  width: 100%;
   border: 1px solid #ffffff;
   padding: 20px;
   position: absolute; /* Changed from 'center' to 'absolute' */
@@ -140,7 +140,11 @@
   color: red;
 }
 
-
+h2 {
+  margin-top: 112px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
 
 
 
@@ -159,7 +163,7 @@
 
 /* Styling for Ingredient Checker */
 .ingredient-checker {
-  margin-top: 40px;
+  margin-top: 0px;
   width: 45%; /* Matches the width of the product search box */
   margin-left: auto;
   margin-right: auto;
@@ -297,7 +301,8 @@
 
 
 .info-section h2 {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
+  margin-top: 112px;
   margin-left: 50px;
   margin-right: 50px;
 }
