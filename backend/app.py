@@ -31,7 +31,7 @@ pore_clogging_ingredients = [
     "Acetylated Lanolin Alcohol",
     "Acetylated wool fat",
     "Acetylated wool wax",
-    "Adansonia digitata l.",
+    "Adansonia digitata",
     "Agar",
     "Ahnfeltiopsis concinna extract",
     "Alaria esculenta extract",
