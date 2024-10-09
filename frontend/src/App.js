@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -125,6 +126,7 @@ function App() {
         <h2>Product Search</h2>
         <p>Search our Database of Products</p>
         <div className="search-container">
+          <i className="fas fa-search search-icon"></i> 
           <input
             className="search-input"
             type="text"
@@ -190,16 +192,38 @@ function App() {
         <h2>Ingredient Checker</h2>
         <p>Check Any Product’s Ingredient List</p>
         <div className="ingredient-checker">
-          <textarea
-            value={pastedIngredients}
-            onChange={(e) => setPastedIngredients(e.target.value)}
-            placeholder="Paste Ingredients"
-            className="pasted-ingredients"
-          />
-          <div>
-            <button onClick={checkPoreCloggingIngredients}>Check</button>
-            <button onClick={() => setPastedIngredients('')}>Clear</button>
+          <div className="textarea-container">
+            <i className={`fa-regular fa-paste paste-icon ${pastedIngredients ? 'hidden' : ''}`}></i>
+            <textarea
+              value={pastedIngredients}
+              onChange={(e) => setPastedIngredients(e.target.value)}
+              onFocus={(e) => {
+                e.target.placeholder = ''; // Remove placeholder on focus
+                document.querySelector('.paste-icon').classList.add('hidden'); // Hide icon
+              }}
+              onBlur={(e) => {
+                if (!e.target.value) {
+                  e.target.placeholder = '     Paste Ingredients'; // Restore placeholder if no content
+                  document.querySelector('.paste-icon').classList.remove('hidden'); // Show icon
+                }
+              }}
+              placeholder="     Paste Ingredients"
+              className="pasted-ingredients"
+            />
           </div>
+          
+          {/* Buttons section */}
+          <div className="button-container">
+            <button onClick={checkPoreCloggingIngredients}>Check</button>
+            <button onClick={() => {
+              setPastedIngredients(''); // Clear the textarea content
+              document.querySelector('.pasted-ingredients').placeholder = '     Paste Ingredients'; // Restore placeholder
+              document.querySelector('.paste-icon').classList.remove('hidden'); // Show the icon
+            }}>
+              Clear
+            </button>
+          </div>
+
           {poreCloggingResults.length > 0 && (
             <div className="pore-clogging-results">
               <button className="close-checker-button" onClick={() => setPoreCloggingResults([])}>&times;</button>
@@ -217,7 +241,7 @@ function App() {
 
       {/* Informational Section */}
       <section className="info-section">
-        <h2>Identify Pore-Clogging Ingredients in Your Everyday Products</h2>
+        <h2>Identify Pore-Clogging Ingredients in Everyday Products</h2>
         <p>Take control of your skincare with our tool, designed to identify pore-clogging ingredients in your favorite products. From skincare and makeup to haircare and body washes, our extensive database covers a wide variety of products, each carefully analyzed for potential breakout-causing ingredients. You can easily search for products or paste any ingredient list for instant analysis. Even products labeled as "non-comedogenic" or "oil-free" may contain problematic ingredients, as these claims aren't always regulated. With our tool, you can reduce irritants and refine your product selection for healthier results.</p>
         <p>Our database was last updated on 9/19/2024. Please note that product formulations may change over time, and it's always a good idea to verify the ingredient list directly from the product packaging to ensure it hasn't been reformulated since our last update.</p>
         <p>The impact of a pore-clogging ingredient on skin varies between individuals. Ingredients that cause issues for some may not affect others in the same way.</p>

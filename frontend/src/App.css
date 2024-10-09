@@ -30,6 +30,7 @@
   transform: translateY(-50%);
   color: #755b5b;
   font-size: 20px;
+  z-index: 1; /* Ensure it appears above the input field */
 }
 
 .dropdown {
@@ -155,10 +156,24 @@ h2 {
 
 
 
+.textarea-container {
+  position: relative; /* Relative positioning for absolute child elements */
+  width: 100%;
+}
 
+.paste-icon {
+  position: absolute;
+  left: 10px; /* Adjust this value as necessary */
+  top: 21px;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #707070;
+  z-index: 1;
+}
 
-
-
+.paste-icon.hidden {
+  display: none;
+}
 
 
 /* Styling for Ingredient Checker */
@@ -176,7 +191,7 @@ h2 {
 .pasted-ingredients {
   width: 100%;
   height: 160px; /* Fixed height */
-  padding: 12px 40px 12px 35px;
+  padding: 12px;
   font-size: 16px;
   border: 2px solid #ccc;
   border-radius: 20px;
