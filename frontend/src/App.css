@@ -1,6 +1,51 @@
 .App {
   text-align: center;
-  font-family: 'Libre Baskerville', serif;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+
+/* Style the header */
+.App-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  background-color: #ecdec8;
+  top: 0;
+  z-index: 1000;
+  margin-bottom: 64px;
+}
+
+/* Logo styling */
+.App-logo {
+  height: 200px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Navigation styling */
+.App-nav a {
+  margin: 0 15px;
+  color: #333; /* Dark text color */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.App-nav a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Mobile responsive styling */
+@media (max-width: 768px) {
+  .App-header {
+    flex-direction: column; /* Stack items vertically on small screens */
+    text-align: center;
+  }
+  
+  .App-nav a {
+    display: block; /* Stack links vertically on small screens */
+    margin: 10px 0;
+  }
 }
 
 * {

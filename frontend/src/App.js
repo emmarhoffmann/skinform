@@ -14,21 +14,6 @@ function App() {
   const [poreCloggingResults, setPoreCloggingResults] = useState([]);
   const [poreCloggingIngredients, setPoreCloggingIngredients] = useState([]);
 
-  // Highlighting search term in product
-  function highlightText(fullText, searchTerm) {
-    if (!fullText || !searchTerm) return fullText;
-
-    const escapedSearchTerm = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regexPattern = escapedSearchTerm.split(/\s+/).map(word => {
-      return `(${word})`;
-    }).join("|");
-
-    const regex = new RegExp(regexPattern, 'gi');
-    const parts = fullText.split(regex);
-
-    return parts.map((part, index) => regex.test(part) ? <strong key={index}>{part}</strong> : part);
-  }
-
   // Fetch the pore-clogging ingredients when the component mounts
   useEffect(() => {
     axios.get('http://127.0.0.1:5000/pore-clogging-ingredients')
@@ -90,6 +75,21 @@ function App() {
       });
   };
 
+  // Highlighting search term in product
+  function highlightText(fullText, searchTerm) {
+    if (!fullText || !searchTerm) return fullText;
+
+    const escapedSearchTerm = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regexPattern = escapedSearchTerm.split(/\s+/).map(word => {
+      return `(${word})`;
+    }).join("|");
+
+    const regex = new RegExp(regexPattern, 'gi');
+    const parts = fullText.split(regex);
+
+    return parts.map((part, index) => regex.test(part) ? <strong key={index}>{part}</strong> : part);
+  }
+
   function highlightPoreCloggingIngredients(ingredientName, matchingPoreCloggingIngredients) {
     if (!matchingPoreCloggingIngredients || matchingPoreCloggingIngredients.length === 0) {
       return ingredientName;
@@ -117,6 +117,10 @@ function App() {
 
   return (
     <div className="App">
+      {/* Add a header with a logo */}
+      <header className="App-header">
+        <img src="/logo.png" alt="Logo" className="App-logo" />
+      </header>
       {/* Main Title and Description */}
       <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
       <p>Search our database of products or paste any product’s ingredients to check for pore-clogging ingredients.</p>
