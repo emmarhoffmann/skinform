@@ -1,13 +1,70 @@
-# Skinform: A Pore-Clogging Ingredient Checker
+# Getting Started with Create React App
 
-## About
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-This project provides a tool for users to identify potential pore-clogging ingredients in a wide variety of personal care products, including skincare, makeup, haircare, and body washes. The goal is to help individuals make informed choices about the products they use daily by analyzing their ingredient lists. Users can either search for products in our extensive database or paste an ingredient list to instantly check for potential pore-clogging ingredients. This tool empowers users to reduce irritants in their routines and optimize their product choices for healthier skin and hair.
+## Available Scripts
 
-## Features
+In the project directory, you can run:
 
-- **Comprehensive Database**: A wide range of over 5000 products available on Sephora, including skincare, makeup, haircare, and body washes, are analyzed for potential breakout-causing ingredients.
-- **Product Search**: Users can search through the database to find products and check their ingredients for pore-clogging substances.
-- **Ingredient Checker**: Users can paste a product’s ingredient list to check for pore-clogging ingredients instantly.
-- **Pore-Clogging Ingredient List**: The full list of pore-clogging ingredients is available for users to browse and will be displayed on the page. This allows users to see exactly which ingredients are flagged as pore-clogging in our checker, so they know what our tool is scanning for.
+### `npm start`
 
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
