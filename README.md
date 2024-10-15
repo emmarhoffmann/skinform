@@ -11,11 +11,3 @@ This project provides a tool for users to identify potential pore-clogging ingre
 - **Ingredient Checker**: Users can paste a product’s ingredient list to check for pore-clogging ingredients instantly.
 - **Pore-Clogging Ingredient List**: The full list of pore-clogging ingredients is available for users to browse and will be displayed on the page. This allows users to see exactly which ingredients are flagged as pore-clogging in our checker, so they know what our tool is scanning for.
 
-## To-Do List
-
-- ~~**Update search functionality**: Make it more flowy and less glitchy, similar to Sephora's search function.~~
-- **Test products**: Test products thoroughly for issues.
-- **UI design adjustments**: Alter the current UI based on the wireframe.
-- ~~**Implement ingredient checker**: Add functionality to check user pasted ingredients.~~
-- ~~**Add text-based content**: Add additional text from the wireframe into the app.~~
-
