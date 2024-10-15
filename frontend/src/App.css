@@ -1,0 +1,406 @@
+.App {
+  text-align: center;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+
+/* Style the header */
+.App-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  background-color: #ecdec8;
+  top: 0;
+  z-index: 1000;
+  margin-bottom: 64px;
+}
+
+/* Logo styling */
+.App-logo {
+  height: 125px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Navigation styling */
+.App-nav a {
+  margin: 0 15px;
+  color: #333; /* Dark text color */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.App-nav a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Mobile responsive styling */
+@media (max-width: 768px) {
+  .App-header {
+    flex-direction: column; /* Stack items vertically on small screens */
+    text-align: center;
+  }
+  
+  .App-nav a {
+    display: block; /* Stack links vertically on small screens */
+    margin: 10px 0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.search-container {
+  position: relative;
+  margin: 20px auto;
+  width: 45%;
+  display: flex
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 35px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #755b5b;
+  font-size: 20px;
+  z-index: 1; /* Ensure it appears above the input field */
+}
+
+.dropdown {
+  width: 100%;
+  border: 1px solid #ffffff;
+  padding: 20px;
+  position: absolute; /* Changed from 'center' to 'absolute' */
+  top: 100%;
+  z-index: 1050; /* Ensure it's high enough to be on top of other content */
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown .suggestion-item:last-child {
+  margin-bottom: 0; 
+}
+
+.suggestion-item {
+  text-align: left; 
+}
+
+.product-name {
+  text-align: left; 
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.suggestion-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.product-image {
+  width: 40%; /* Full width of the container */
+  height: auto; /* Adjust height automatically */
+  object-fit: contain; /* Ensures the entire image is visible within the bounding box */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+
+.product-detail {
+  position: relative; /* Added to ensure proper stacking context */
+  border: 1px solid #e1e1e1;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1000; /* Lower than dropdown for overlay effect */
+}
+
+.product-title {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.ingredients-list {
+  -webkit-column-count: 2; /* Chrome, Safari, Opera */
+  -moz-column-count: 2;    /* Firefox */
+  column-count: 2;         /* standard syntax */
+
+  -webkit-column-gap: 20px; /* Chrome, Safari, Opera */
+  -moz-column-gap: 20px;    /* Firefox */
+  column-gap: 20px;         /* standard syntax */
+
+  list-style-type: none; /* Removes bullet points from the list */
+  padding: 0;            /* Removes padding around the list */
+
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ingredients-list li {
+  text-align: center;
+}
+
+
+.ingredients-list li.pore-clogging {
+  color: red;
+}
+
+h2 {
+  margin-top: 112px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+
+
+
+
+
+
+
+
+
+.textarea-container {
+  position: relative; /* Relative positioning for absolute child elements */
+  width: 100%;
+}
+
+.paste-icon {
+  position: absolute;
+  left: 10px; /* Adjust this value as necessary */
+  top: 21px;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #707070;
+  z-index: 1;
+}
+
+.paste-icon.hidden {
+  display: none;
+}
+
+
+/* Styling for Ingredient Checker */
+.ingredient-checker {
+  margin-top: 0px;
+  width: 45%; /* Matches the width of the product search box */
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Styling for the textarea */
+.pasted-ingredients {
+  width: 100%;
+  height: 160px; /* Fixed height */
+  padding: 12px;
+  font-size: 16px;
+  font-family: 'Josefin Sans', sans-serif;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  resize: none; /* Disable resizing */
+  position: relative;
+  overflow: auto;
+}
+
+
+/* Custom scrollbar styles */
+.pasted-ingredients::-webkit-scrollbar {
+  width: 12px;
+}
+
+.pasted-ingredients::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 20px 20px 0;
+}
+
+.pasted-ingredients::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+  border: 3px solid #f1f1f1;
+}
+
+.pasted-ingredients::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Specific styles for 'Check' and 'Clear' buttons inside .ingredient-checker */
+.ingredient-checker button:not(.close-checker-button) {
+  background-color: #707070; 
+  color: white;
+  padding: 12px 30px;       /* Padding for buttons */
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px 20px;        /* Increase margin between the buttons */
+  transition: background-color 0.3s ease;
+  box-shadow: none;         /* Ensure no box-shadow or outline */
+  outline: none;            /* Remove default button outline */
+}
+
+.ingredient-checker button:not(.close-checker-button):hover {
+  background-color: #656565;
+}
+
+.ingredient-checker button:not(.close-checker-button):active {
+  background-color: #505050;
+}
+
+
+/* Container for the results */
+.pore-clogging-results {
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #e1e1e1;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow: auto;
+  display: block;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.pore-clogging-results ul.ingredients-list {
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  list-style-type: none;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  width: 100%;
+}
+
+/* Center align the list items */
+.pore-clogging-results li {
+  text-align: center;
+}
+
+.pore-clogging-results li.pore-clogging {
+  color: red;
+}
+
+
+
+
+
+
+.close-button, .close-checker-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #828282;
+  padding: 5px;
+  outline: none;
+}
+
+.close-button:hover, .close-checker-button:hover {
+  color: #333;
+  background: none;
+}
+
+
+
+
+
+.info-section h2 {
+  margin-bottom: 5px;
+  margin-top: 112px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.info-section p {
+  margin-bottom: 10px;
+  padding: 0 10%;
+  margin-left: 15px;
+  margin-right: 15px;
+  line-height: 1.5;
+  text-align: justify;
+}
+
+.pore-clogging-list-section {
+  margin-bottom: 20px;
+  padding: 0 20%;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding: 10px 5%;
+}
+
+.pore-clogging-list-section .ingredients-list {
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  column-gap: 20px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pore-clogging-list-section .ingredients-list li {
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.pore-clogging-list-section p {
+  margin-top: 10px;
+  text-align: center;
+}
+
