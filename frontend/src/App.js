@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
