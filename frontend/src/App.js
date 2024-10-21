@@ -17,7 +17,7 @@ function App() {
 
   // Fetch the pore-clogging ingredients when the component mounts
   useEffect(() => {
-    axios.get('http://git.heroku.com/skinform.git/pore-clogging-ingredients')
+    axios.get('http://skinform-b48d8b865c60.herokuapp.com/pore-clogging-ingredients')
       .then(response => {
         setPoreCloggingIngredients(response.data); // Set the ingredients in state
       })
@@ -28,7 +28,7 @@ function App() {
 
   useEffect(() => {
     if (searchTerm) {
-      axios.get(`http://git.heroku.com/skinform.git/recommend-products?name=${searchTerm}`)
+      axios.get(`http://skinform-b48d8b865c60.herokuapp.com/recommend-products?name=${searchTerm}`)
         .then(response => {
           const results = response.data.slice(0, 5); // Limit to 5 products
           setRecommendedProducts(results);
@@ -52,7 +52,7 @@ function App() {
 
   const fetchProductIngredients = (productName) => {
     setLoadingIngredients(true);
-    axios.get(`http://git.heroku.com/skinform.git/product-ingredients/${encodeURIComponent(productName)}`)
+    axios.get(`http://skinform-b48d8b865c60.herokuapp.com/product-ingredients/${encodeURIComponent(productName)}`)
       .then(response => {
         const updatedProduct = { ...selectedProduct, ...response.data };
         setSelectedProduct(updatedProduct);
@@ -67,7 +67,7 @@ function App() {
   const checkPoreCloggingIngredients = () => {
     if (!pastedIngredients.trim()) return;
 
-    axios.post('http://git.heroku.com/skinform.git/check-ingredients', { ingredients: pastedIngredients })
+    axios.post('http://skinform-b48d8b865c60.herokuapp.com/check-ingredients', { ingredients: pastedIngredients })
       .then(response => {
         setPoreCloggingResults(response.data);
       })

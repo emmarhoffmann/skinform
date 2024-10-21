@@ -14,7 +14,7 @@ from bson import ObjectId
 load_dotenv()  # Ensure this is before accessing any environment variables
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://git.heroku.com/skinform.git"]}})
+CORS(app, resources={r"/*": {"origins": ["https://skinform-b48d8b865c60.herokuapp.com/"]}})
 
 # MongoDB setup
 mongo_uri = os.getenv('MONGO_URI')
