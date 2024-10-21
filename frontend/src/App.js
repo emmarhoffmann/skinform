@@ -17,7 +17,7 @@ function App() {
 
   // Fetch the pore-clogging ingredients when the component mounts
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/pore-clogging-ingredients')
+    axios.get('http://skinform.vercel.app/pore-clogging-ingredients')
       .then(response => {
         setPoreCloggingIngredients(response.data); // Set the ingredients in state
       })
@@ -28,7 +28,7 @@ function App() {
 
   useEffect(() => {
     if (searchTerm) {
-      axios.get(`http://127.0.0.1:5000/recommend-products?name=${searchTerm}`)
+      axios.get(`http://skinform.vercel.app/recommend-products?name=${searchTerm}`)
         .then(response => {
           const results = response.data.slice(0, 5); // Limit to 5 products
           setRecommendedProducts(results);
@@ -52,7 +52,7 @@ function App() {
 
   const fetchProductIngredients = (productName) => {
     setLoadingIngredients(true);
-    axios.get(`http://127.0.0.1:5000/product-ingredients/${encodeURIComponent(productName)}`)
+    axios.get(`http://skinform.vercel.app/product-ingredients/${encodeURIComponent(productName)}`)
       .then(response => {
         const updatedProduct = { ...selectedProduct, ...response.data };
         setSelectedProduct(updatedProduct);
@@ -67,7 +67,7 @@ function App() {
   const checkPoreCloggingIngredients = () => {
     if (!pastedIngredients.trim()) return;
 
-    axios.post('http://127.0.0.1:5000/check-ingredients', { ingredients: pastedIngredients })
+    axios.post('http://skinform.vercel.app/check-ingredients', { ingredients: pastedIngredients })
       .then(response => {
         setPoreCloggingResults(response.data);
       })
