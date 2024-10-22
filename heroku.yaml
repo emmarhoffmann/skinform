@@ -22,7 +22,7 @@ web: gunicorn app:app
   "name": "skinform-frontend",
   "version": "1.0.0",
   "engines": {
-    "node": "20.17.0" 
+    "node": "18.x" 
   },
   // ... rest of your package.json
 }
