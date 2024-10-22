@@ -15,7 +15,7 @@ load_dotenv()  # Ensure this is before accessing any environment variables
 
 app = Flask(__name__, static_folder='../frontend/build')
 CORS(app, resources={r"/*": {"origins": [
-    "https://skinform-b48d8b865c60.herokuapp.com",
+    "https://skinform.onrender.com", 
     "http://localhost:3000"
 ]}})
 
