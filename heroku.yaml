@@ -1,0 +1,43 @@
+# heroku.yml - place this in the root directory (skinform/)
+build:
+  packages:
+    - jq
+  config:
+    APP_BASE: backend
+    NODEJS_ROOT: frontend
+    PYTHON_ROOT: backend
+  buildpacks:
+    - url: https://github.com/heroku/heroku-buildpack-nodejs
+      paths:
+        - frontend
+    - url: https://github.com/heroku/heroku-buildpack-python
+      paths:
+        - backend
+
+# Procfile - update in backend/
+web: gunicorn app:app
+
+# package.json - ensure this exists in frontend/
+{
+  "name": "skinform-frontend",
+  "version": "1.0.0",
+  "engines": {
+    "node": "20.17.0" 
+  },
+  // ... rest of your package.json
+}
+
+# requirements.txt - ensure these are in backend/
+flask==2.0.1
+gunicorn==20.1.0
+python-dotenv==0.19.0
+pymongo==3.12.0
+// ... other dependencies
+
+# .gitignore - in root directory
+venv/
+node_modules/
+.env
+*.pyc
+__pycache__/
+.DS_Store
