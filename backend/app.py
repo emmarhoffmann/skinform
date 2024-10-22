@@ -13,11 +13,8 @@ from bson import ObjectId
 # Load environment variables
 load_dotenv()  # Ensure this is before accessing any environment variables
 
-app = Flask(__name__, static_folder='../frontend/build')
-CORS(app, resources={r"/*": {"origins": [
-    "https://skinform.onrender.com", 
-    "http://localhost:3000"
-]}})
+app = Flask(__name__, static_folder='./build', static_url_path='')
+CORS(app)
 
 # MongoDB setup
 mongo_uri = os.getenv('MONGO_URI')
@@ -486,8 +483,7 @@ def serve(path):
         return {"error": "Not Found"}, 404
     if path != "" and os.path.exists(app.static_folder + '/' + path):
         return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
