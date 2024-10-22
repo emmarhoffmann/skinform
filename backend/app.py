@@ -16,10 +16,19 @@ load_dotenv()  # Ensure this is before accessing any environment variables
 app = Flask(__name__, static_folder='./build', static_url_path='')
 CORS(app)
 
-# MongoDB setup
-mongo_uri = os.getenv('MONGO_URI')
-client = MongoClient(mongo_uri)
-db = client.skinform
+# MongoDB connection with retry logic
+def get_db():
+    try:
+        client = MongoClient(os.getenv('MONGO_URI'), serverSelectionTimeoutMS=5000)
+        # Force a connection attempt
+        client.server_info()
+        return client.skinform
+    except Exception as e:
+        print(f"MongoDB connection error: {e}")
+        return None
+
+app = Flask(__name__, static_folder='./build', static_url_path='')
+CORS(app)
 
 # Pore clogging ingredients, courtesy of Acne Clinc NYC: https://acneclinicnyc.com/pore-clogging-ingredients/
 pore_clogging_ingredients = [
@@ -377,26 +386,38 @@ def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_li
 
 @app.route('/search-products', methods=['GET'])
 def search_products():
-    search_term = request.args.get('name', '')
-    normalized_search = normalize_text(search_term)  # Normalize the input for searching
+    try:
+        db = get_db()
+        if not db:
+            return jsonify({"error": "Database connection failed"}), 500
 
-    # Split the search term into individual words
-    search_words = normalized_search.split()
-
-    # Create regex patterns for each search word and combine with $and so all terms must match
-    regex_queries = [{'search_keywords': {'$regex': re.escape(word), '$options': 'i'}} for word in search_words]
-
-    # Perform the query, ensuring all search terms are found in the search_keywords field
-    products = list(db.products.find({
-        '$and': regex_queries
-    }))
-    
-    return jsonify([{
-        "name": product["name"],
-        "brand": product.get("brand", "Unknown brand"),
-        "image_url": product.get("image_url", "default_image.jpg"),
-        "ingredients": product.get("ingredients", [])
-    } for product in products])
+        search_term = request.args.get('name', '')
+        normalized_search = normalize_text(search_term)
+        search_words = normalized_search.split()
+        
+        # Add debug logging
+        print(f"Search term: {search_term}")
+        print(f"Normalized search: {normalized_search}")
+        
+        regex_queries = [{'search_keywords': {'$regex': re.escape(word), '$options': 'i'}} for word in search_words]
+        
+        # Add debug logging for query
+        print(f"MongoDB query: {regex_queries}")
+        
+        products = list(db.products.find({'$and': regex_queries}))
+        
+        # Add debug logging for results
+        print(f"Found {len(products)} products")
+        
+        return jsonify([{
+            "name": product["name"],
+            "brand": product.get("brand", "Unknown brand"),
+            "image_url": product.get("image_url", "default_image.jpg"),
+            "ingredients": product.get("ingredients", [])
+        } for product in products])
+    except Exception as e:
+        print(f"Search error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
