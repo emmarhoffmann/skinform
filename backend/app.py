@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, send_from_directory, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import binary
@@ -13,8 +13,11 @@ from bson import ObjectId
 # Load environment variables
 load_dotenv()  # Ensure this is before accessing any environment variables
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://skinform-b48d8b865c60.herokuapp.com/"]}})
+app = Flask(__name__, static_folder='../frontend/build')
+CORS(app, resources={r"/*": {"origins": [
+    "https://skinform-b48d8b865c60.herokuapp.com",
+    "http://localhost:3000"
+]}})
 
 # MongoDB setup
 mongo_uri = os.getenv('MONGO_URI')
@@ -338,7 +341,7 @@ pore_clogging_ingredients = [
 ]
 
 # Home route
-@app.route('/')
+@app.route('/api')
 def home():
     return "Welcome to the Skincare Platform API!"
 
@@ -475,5 +478,17 @@ def check_ingredients():
     
     return jsonify(results)
 
+# Serve React App
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path.startswith('api/'):
+        return {"error": "Not Found"}, 404
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)

@@ -1,0 +1,6 @@
+# root directory: project.toml
+[build]
+  [build.env]
+    APP_BASE = "backend"
+    NODEJS_ROOT = "frontend"
+    PYTHON_ROOT = "backend"
