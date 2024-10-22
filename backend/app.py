@@ -20,8 +20,7 @@ CORS(app)
 def get_db():
     try:
         client = MongoClient(os.getenv('MONGO_URI'), serverSelectionTimeoutMS=5000)
-        # Force a connection attempt
-        client.server_info()
+        client.server_info()  # Force a connection attempt
         return client.skinform
     except Exception as e:
         print(f"MongoDB connection error: {e}")
@@ -421,27 +420,33 @@ def search_products():
 
 @app.route('/recommend-products', methods=['GET'])
 def recommend_products():
-    search_term = request.args.get('name', '')
-    normalized_search = normalize_text(search_term)  # Normalize the input for searching
+    # Initialize the database connection
+    db = get_db()
+    if db is None:
+        return jsonify({"error": "Database connection failed"}), 500
 
-    # Split the search term into individual words
-    search_words = normalized_search.split()
+    try:
+        search_term = request.args.get('name', '')
+        normalized_search = normalize_text(search_term)
+        search_words = normalized_search.split()
+        regex_queries = [{'search_keywords': {'$regex': re.escape(word), '$options': 'i'}} for word in search_words]
+        
+        # Execute the MongoDB query
+        recommended_products = list(db.products.find({'$and': regex_queries}).limit(5))
+        
+        # Build the response
+        recommendations = [{
+            'name': product['name'],
+            'brand': product.get('brand', "Unknown brand"),
+            'image_url': product.get('image_url', "default_image.jpg"),
+            'ingredients': product.get('ingredients', [])
+        } for product in recommended_products]
 
-    # Create regex patterns for each search word and combine with $and so all terms must match
-    regex_queries = [{'search_keywords': {'$regex': re.escape(word), '$options': 'i'}} for word in search_words]
+        return jsonify(recommendations)
+    except Exception as e:
+        # Log and handle any errors that occur
+        return jsonify({"error": str(e)}), 500
 
-    # Perform the query, ensuring all search terms are found in the search_keywords field
-    recommended_products = list(db.products.find({
-        '$and': regex_queries
-    }, {'name': 1, 'brand': 1, 'image_url': 1, 'ingredients': 1}).limit(5))  # Limit results to 5
-
-    recommendations = [{
-        'name': product['name'],
-        'brand': product.get('brand', 'Unknown brand'),
-        'image_url': product.get('image_url', 'default_image.jpg'),
-    } for product in recommended_products]
-
-    return jsonify(recommendations)
 
 # Route to fetch product ingredients using the product's name
 @app.route('/product-ingredients/<product_name>', methods=['GET'])
