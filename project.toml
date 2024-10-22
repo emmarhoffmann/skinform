@@ -5,6 +5,6 @@ build
   [
 build.env
 ]
-    APP_BASE = "backend"
+    APP_BASE = "."
     NODEJS_ROOT = "frontend"
     PYTHON_ROOT = "backend"
