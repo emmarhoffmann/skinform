@@ -23,10 +23,9 @@ def get_db():
         client = MongoClient(
             os.getenv('MONGO_URI'),
             serverSelectionTimeoutMS=5000,
-            ssl=True,
-            ssl_cert_reqs=ssl.CERT_REQUIRED,
-            ssl_ca_certs=certifi.where(),
-            ssl_match_hostname=False
+            tls=True,
+            tlsCertificateKeyFile=certifi.where(),
+            serverApi='1'
         )
         client.server_info()  # Force a connection attempt
         return client.skinform
