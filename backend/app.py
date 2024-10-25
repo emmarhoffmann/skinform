@@ -25,11 +25,14 @@ def get_db():
             uri,
             serverSelectionTimeoutMS=5000,
             connect=True,
-            directConnection=False
+            directConnection=False,
+            tls=True,
+            tlsAllowInvalidCertificates=True
         )
-        # Force connection attempt
-        client.admin.command('ismaster')
-        db = client.get_database()  # This will use the database name from the URI
+        # Explicitly specify the database name
+        db = client['skinform']  # Use your actual database name here
+        # Test connection with a simple command
+        db.command('ping')
         return db
     except Exception as e:
         print(f"MongoDB connection error: {e}")
@@ -464,13 +467,20 @@ def get_product_ingredients(product_name):
         if not db:
             return jsonify({"error": "Database connection failed"}), 500
 
+        # Explicitly get the products collection
+        products_collection = db['products']  # Use your actual collection name here
+
+        # Add debug logging
+        print(f"Looking for product: {product_name}")
+
         # Fetch the product by name with a case-insensitive search
-        product = db.products.find_one(
+        product = products_collection.find_one(
             {'name': {'$regex': f'^{re.escape(product_name)}$', '$options': 'i'}},
             {'ingredients': 1, 'name': 1, 'image_url': 1, 'brand': 1}
         )
         
         if not product:
+            print(f"Product not found: {product_name}")
             return jsonify({"error": "Product not found"}), 404
 
         # Add debug logging
@@ -489,7 +499,7 @@ def get_product_ingredients(product_name):
         }
 
         # Add debug logging
-        print(f"Response: {response}")
+        print(f"Sending response: {response}")
 
         return jsonify(response)
     except Exception as e:
