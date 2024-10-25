@@ -459,20 +459,27 @@ def recommend_products():
 @app.route('/product-ingredients/<product_name>', methods=['GET'])
 def get_product_ingredients(product_name):
     try:
-        # Fetch the product by name with a case-insensitive search and include all required fields
+        # Get database connection
+        db = get_db()
+        if not db:
+            return jsonify({"error": "Database connection failed"}), 500
+
+        # Fetch the product by name with a case-insensitive search
         product = db.products.find_one(
             {'name': {'$regex': f'^{re.escape(product_name)}$', '$options': 'i'}},
-            {'ingredients': 1, 'name': 1, 'image_url': 1, 'brand': 1}  # Fetching name, image_url, brand, and ingredients
+            {'ingredients': 1, 'name': 1, 'image_url': 1, 'brand': 1}
         )
         
         if not product:
             return jsonify({"error": "Product not found"}), 404
 
-        # Construct the response including all the required details
+        # Add debug logging
+        print(f"Found product: {product}")
+
         response = {
             'name': product['name'],
-            'brand': product.get('brand', 'Unknown brand'),  # Provide a default if the brand isn't specified
-            'image_url': product.get('image_url', 'default_image.jpg'),  # Provide a default image if none exists
+            'brand': product.get('brand', 'Unknown brand'),
+            'image_url': product.get('image_url', 'default_image.jpg'),
             'ingredients': [
                 {
                     'name': ing,
@@ -481,9 +488,12 @@ def get_product_ingredients(product_name):
             ]
         }
 
-        return jsonify(response)
+        # Add debug logging
+        print(f"Response: {response}")
 
+        return jsonify(response)
     except Exception as e:
+        print(f"Error in get_product_ingredients: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
 @app.route('/check-ingredients', methods=['POST'])
