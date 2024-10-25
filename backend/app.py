@@ -20,12 +20,7 @@ CORS(app)
 # MongoDB connection with retry logic and SSL configuration
 def get_db():
     try:
-        # Clean up the URI to ensure proper format
         uri = os.getenv('MONGO_URI')
-        if uri and not uri.endswith('?'):
-            uri = uri.split('?')[0] + '/?'
-            uri += 'retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'
-
         client = MongoClient(
             uri,
             serverSelectionTimeoutMS=5000,
@@ -34,7 +29,8 @@ def get_db():
         )
         # Force connection attempt
         client.admin.command('ismaster')
-        return client.skinform
+        db = client.get_database()  # This will use the database name from the URI
+        return db
     except Exception as e:
         print(f"MongoDB connection error: {e}")
         return None
