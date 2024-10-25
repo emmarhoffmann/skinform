@@ -8,7 +8,8 @@ import uuid
 import os
 from dotenv import load_dotenv
 from bson import ObjectId
-
+import ssl
+import certifi
 
 # Load environment variables
 load_dotenv()  # Ensure this is before accessing any environment variables
@@ -16,10 +17,17 @@ load_dotenv()  # Ensure this is before accessing any environment variables
 app = Flask(__name__, static_folder='./build', static_url_path='')
 CORS(app)
 
-# MongoDB connection with retry logic
+# MongoDB connection with retry logic and SSL configuration
 def get_db():
     try:
-        client = MongoClient(os.getenv('MONGO_URI'), serverSelectionTimeoutMS=5000)
+        client = MongoClient(
+            os.getenv('MONGO_URI'),
+            serverSelectionTimeoutMS=5000,
+            ssl=True,
+            ssl_cert_reqs=ssl.CERT_REQUIRED,
+            ssl_ca_certs=certifi.where(),
+            ssl_match_hostname=False
+        )
         client.server_info()  # Force a connection attempt
         return client.skinform
     except Exception as e:
@@ -447,8 +455,6 @@ def recommend_products():
         # Log and handle any errors that occur
         return jsonify({"error": str(e)}), 500
 
-
-# Route to fetch product ingredients using the product's name
 @app.route('/product-ingredients/<product_name>', methods=['GET'])
 def get_product_ingredients(product_name):
     try:
@@ -479,7 +485,6 @@ def get_product_ingredients(product_name):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-# Route to check ingredients for user input ingredients
 @app.route('/check-ingredients', methods=['POST'])
 def check_ingredients():
     data = request.get_json()
