@@ -22,9 +22,7 @@ def get_db():
     try:
         client = MongoClient(
             os.getenv('MONGO_URI'),
-            serverSelectionTimeoutMS=5000,
-            tls=True,
-            tlsCAFile=certifi.where()
+            serverSelectionTimeoutMS=5000
         )
         client.server_info()  # Force a connection attempt
         return client.skinform
