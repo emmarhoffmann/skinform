@@ -24,8 +24,7 @@ def get_db():
             os.getenv('MONGO_URI'),
             serverSelectionTimeoutMS=5000,
             tls=True,
-            tlsCertificateKeyFile=certifi.where(),
-            serverApi='1'
+            tlsCAFile=certifi.where()
         )
         client.server_info()  # Force a connection attempt
         return client.skinform
