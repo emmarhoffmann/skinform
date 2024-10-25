@@ -462,34 +462,28 @@ def recommend_products():
 @app.route('/product-ingredients/<product_name>', methods=['GET'])
 def get_product_ingredients(product_name):
     try:
-        # Get database connection
+        # Get database connection first
         db = get_db()
         if not db:
             return jsonify({"error": "Database connection failed"}), 500
 
-        # Explicitly get the products collection
-        products_collection = db['products']  # Use your actual collection name here
-
-        # Add debug logging
-        print(f"Looking for product: {product_name}")
-
-        # Fetch the product by name with a case-insensitive search
-        product = products_collection.find_one(
+        # Fetch the product by name with a case-insensitive search and include all required fields
+        product = db.products.find_one(
             {'name': {'$regex': f'^{re.escape(product_name)}$', '$options': 'i'}},
-            {'ingredients': 1, 'name': 1, 'image_url': 1, 'brand': 1}
+            {'ingredients': 1, 'name': 1, 'image_url': 1, 'brand': 1}  # Fetching name, image_url, brand, and ingredients
         )
         
         if not product:
-            print(f"Product not found: {product_name}")
             return jsonify({"error": "Product not found"}), 404
 
         # Add debug logging
         print(f"Found product: {product}")
 
+        # Construct the response including all the required details
         response = {
             'name': product['name'],
-            'brand': product.get('brand', 'Unknown brand'),
-            'image_url': product.get('image_url', 'default_image.jpg'),
+            'brand': product.get('brand', 'Unknown brand'),  # Provide a default if the brand isn't specified
+            'image_url': product.get('image_url', 'default_image.jpg'),  # Provide a default image if none exists
             'ingredients': [
                 {
                     'name': ing,
@@ -497,10 +491,10 @@ def get_product_ingredients(product_name):
                 } for ing in product.get('ingredients', [])
             ]
         }
-
+        
         # Add debug logging
         print(f"Sending response: {response}")
-
+        
         return jsonify(response)
     except Exception as e:
         print(f"Error in get_product_ingredients: {str(e)}")
