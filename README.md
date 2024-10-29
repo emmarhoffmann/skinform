@@ -4,6 +4,8 @@
 
 This project provides a tool for users to identify potential pore-clogging ingredients in a wide variety of personal care products, including skincare, makeup, haircare, and body washes. The goal is to help individuals make informed choices about the products they use daily by analyzing their ingredient lists. Users can either search for products in our extensive database or paste an ingredient list to instantly check for potential pore-clogging ingredients. This tool empowers users to reduce irritants in their routines and optimize their product choices for healthier skin and hair.
 
+*Note: there may be up to a 50 second delay when first launching website due to initial startup on free vercel version*
+
 ## Features
 
 - **Comprehensive Database**: A wide range of over 5000 products available on Sephora, including skincare, makeup, haircare, and body washes, are analyzed for potential breakout-causing ingredients.
