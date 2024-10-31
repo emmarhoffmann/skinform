@@ -154,25 +154,27 @@ function App() {
       {/* Browse Categories Section */}
       <section className="browse-categories-section">
         <h2>Find Products by Category: Pore-Safe and Pore-Clogging Products</h2>
-        <button onClick={() => setSelectedCategory(null)} className="browse-categories-button">
-          Browse Categories
+        <button onClick={() => setShowCategories(!showCategories)} className="browse-categories-button">
+          {showCategories ? '▼ Browse Categories' : '▶ Browse Categories'}
         </button>
 
-        {/* Display categories as text */}
-        {selectedCategory === null && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {/* Display categories in 4 columns */}
+        {showCategories && (
+          <div className="categories-list" style={{ columnCount: 4, textAlign: 'left' }}>
             {categories.map((category, index) => (
               <div
                 key={index}
                 onClick={() => handleCategoryClick(category)}
-                className="p-3 text-center cursor-pointer hover:bg-gray-100 rounded-lg transition-colors"
+                className="category-item"
               >
                 {category}
               </div>
             ))}
           </div>
         )}
+      </section>
 
+        {/* Display products in selected category */}
         {/* Display products in selected category */}
         {selectedCategory && (
           <div className="category-products">
@@ -205,9 +207,40 @@ function App() {
             ) : (
               <p>No pore-clogging products found in this category.</p>
             )}
+
+            {/* Product Detail Section - Will appear when a product is selected */}
+            {selectedProduct && (
+              <div className="product-detail">
+                <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+                <img
+                  className="product-image"
+                  src={selectedProduct.image_url}
+                  alt={selectedProduct.name}
+                  onError={handleImageError}
+                />
+                <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+                {loadingIngredients ? (
+                  <p>Loading ingredients...</p>
+                ) : (
+                  <>
+                    <p className="product-description">Ingredients:</p>
+                    {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+                      <ul className="ingredients-list">
+                        {selectedProduct.ingredients.map((ingredient, index) => (
+                          <li key={index}>
+                            {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No ingredients information available.</p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
-      </section>
 
       {/* Product Search Section */}
       <section className="product-search-section">
