@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import ProductCarousel from './ProductCarousel'; 
 
 
 function App() {
@@ -238,7 +239,7 @@ function App() {
             </div>
           )}
         </section>
-        
+
         {/* Product Search Section */}
         <section className="product-search-section">
           <h2>Product Search</h2>
