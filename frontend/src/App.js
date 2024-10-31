@@ -161,7 +161,6 @@ function App() {
 
 
 
-
         {/* Browse Categories Section */}
         <section className="browse-categories-section">
           <h2>Find Products by Category: Pore-Safe and Pore-Clogging Products</h2>
@@ -274,38 +273,6 @@ function App() {
             )}
           </div>
         </section>
-
-        {selectedProduct && (
-          <div className="product-detail">
-            <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-            <img
-              className="product-image"
-              src={selectedProduct.image_url}
-              alt={selectedProduct.name}
-              onError={handleImageError}
-            />
-            <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
-            {loadingIngredients ? (
-              <p>Loading ingredients...</p>
-            ) : (
-              <>
-                <p className="product-description">Ingredients:</p>
-                {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
-                  <ul className="ingredients-list">
-                    {selectedProduct.ingredients.map((ingredient, index) => (
-                      <li key={index}>
-                        {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No ingredients information available.</p>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
 
 
 
