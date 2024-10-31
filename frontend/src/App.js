@@ -158,7 +158,6 @@ function App() {
           Browse Categories
         </button>
 
-        {/* Display categories as buttons */}
         {/* Display categories as text */}
         {selectedCategory === null && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -184,8 +183,7 @@ function App() {
             {safeProducts.length > 0 ? (
               <ul className="product-list">
                 {safeProducts.map((product, index) => (
-                  <li key={index} className="product-item">
-                    <img src={product.image_url} alt={product.name} onError={handleImageError} />
+                  <li key={index} className="product-item" onClick={() => handleProductSelect(product)}>
                     <span>{product.brand} - {product.name}</span>
                   </li>
                 ))}
@@ -199,8 +197,7 @@ function App() {
             {unsafeProducts.length > 0 ? (
               <ul className="product-list">
                 {unsafeProducts.map((product, index) => (
-                  <li key={index} className="product-item">
-                    <img src={product.image_url} alt={product.name} onError={handleImageError} />
+                  <li key={index} className="product-item" onClick={() => handleProductSelect(product)}>
                     <span>{product.brand} - {product.name}</span>
                   </li>
                 ))}
