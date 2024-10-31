@@ -404,3 +404,54 @@ h2 {
   text-align: center;
 }
 
+
+
+
+.browse-categories-section {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.browse-categories-button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.categories-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.category-button {
+  padding: 8px 16px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.category-products {
+  margin-top: 20px;
+}
+
+.product-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.product-item {
+  width: 150px;
+  text-align: center;
+}
+
+

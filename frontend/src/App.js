@@ -15,6 +15,11 @@ function App() {
   const [poreCloggingResults, setPoreCloggingResults] = useState([]);
   const [poreCloggingIngredients, setPoreCloggingIngredients] = useState([]);
 
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [safeProducts, setSafeProducts] = useState([]);
+  const [unsafeProducts, setUnsafeProducts] = useState([]);
+
   // Fetch the pore-clogging ingredients when the component mounts
   useEffect(() => {
     axios.get('https://skinform.onrender.com/pore-clogging-ingredients')
@@ -43,6 +48,13 @@ function App() {
       setShowDropdown(false);
     }
   }, [searchTerm]);
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    axios.get('https://skinform.onrender.com/categories')
+      .then(response => setCategories(response.data))
+      .catch(error => console.error("Error fetching categories:", error));
+  }, []);
 
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
@@ -74,6 +86,19 @@ function App() {
       .catch(error => {
         console.error('Error checking ingredients:', error);
       });
+  };
+
+  // Fetch products by category when a category is selected
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    axios.get(`https://skinform.onrender.com/products-by-category`, {
+      params: { category }
+    })
+      .then(response => {
+        setSafeProducts(response.data.products_without_pore_clogging);
+        setUnsafeProducts(response.data.products_with_pore_clogging);
+      })
+      .catch(error => console.error("Error fetching products by category:", error));
   };
 
   // Highlighting search term in product
@@ -125,6 +150,62 @@ function App() {
       {/* Main Title and Description */}
       <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
       <p>Search our database of products or paste any product’s ingredients to check for pore-clogging ingredients.</p>
+
+      {/* Browse Categories Section */}
+      <section className="browse-categories-section">
+        <h2>Find Products by Category: Pore-Safe and Pore-Clogging Products</h2>
+        <button onClick={() => setSelectedCategory(null)} className="browse-categories-button">
+          Browse Categories
+        </button>
+
+        {/* Display categories as buttons */}
+        {selectedCategory === null && (
+          <div className="categories-list">
+            {categories.map((category, index) => (
+              <button key={index} onClick={() => handleCategoryClick(category)} className="category-button">
+                {category}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Display products in selected category */}
+        {selectedCategory && (
+          <div className="category-products">
+            <h3>{selectedCategory}</h3>
+            
+            {/* Safe Products */}
+            <h4>Pore-Safe Products</h4>
+            {safeProducts.length > 0 ? (
+              <ul className="product-list">
+                {safeProducts.map((product, index) => (
+                  <li key={index} className="product-item">
+                    <img src={product.image_url} alt={product.name} onError={handleImageError} />
+                    <span>{product.brand} - {product.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No pore-safe products found in this category.</p>
+            )}
+
+            {/* Unsafe Products */}
+            <h4>Pore-Clogging Products</h4>
+            {unsafeProducts.length > 0 ? (
+              <ul className="product-list">
+                {unsafeProducts.map((product, index) => (
+                  <li key={index} className="product-item">
+                    <img src={product.image_url} alt={product.name} onError={handleImageError} />
+                    <span>{product.brand} - {product.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No pore-clogging products found in this category.</p>
+            )}
+          </div>
+        )}
+      </section>
 
       {/* Product Search Section */}
       <section className="product-search-section">

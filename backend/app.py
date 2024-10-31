@@ -395,6 +395,54 @@ def find_matching_pore_clogging_ingredients(product_ingredient, pore_clogging_li
     
     return matches
 
+# Add categories route
+@app.route('/categories', methods=['GET'])
+def get_categories():
+    db = get_db()
+    if not db:
+        return jsonify({"error": "Database connection failed"}), 500
+    
+    try:
+        categories = db.products.distinct("product_category")
+        return jsonify(categories)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Add products by category route
+@app.route('/products-by-category', methods=['GET'])
+def products_by_category():
+    db = get_db()
+    if not db:
+        return jsonify({"error": "Database connection failed"}), 500
+    
+    category = request.args.get('category')
+    if not category:
+        return jsonify({"error": "Category is required"}), 400
+    
+    try:
+        products = list(db.products.find({"product_category": category}))
+        products_with_pore_clogging = []
+        products_without_pore_clogging = []
+        
+        for product in products:
+            ingredients = product.get("ingredients", [])
+            has_pore_clogging = any(
+                find_matching_pore_clogging_ingredients(ing, pore_clogging_ingredients) for ing in ingredients
+            )
+            
+            if has_pore_clogging:
+                products_with_pore_clogging.append(product)
+            else:
+                products_without_pore_clogging.append(product)
+        
+        return jsonify({
+            "category": category,
+            "products_with_pore_clogging": products_with_pore_clogging,
+            "products_without_pore_clogging": products_without_pore_clogging
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/search-products', methods=['GET'])
 def search_products():
     try:
