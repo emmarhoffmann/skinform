@@ -1,5 +1,7 @@
+// ProductCarousel.js
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+// Remove the lucide-react import and use simple arrows instead
+// import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ProductCarousel = ({ products, title, isLoading }) => {
   const [flippedCard, setFlippedCard] = useState(null);
@@ -37,10 +39,10 @@ const ProductCarousel = ({ products, title, isLoading }) => {
       <div className="relative group">
         <button 
           onClick={() => scroll('left')} 
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 rounded-full p-2 shadow-md hover:bg-gray-100"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
           aria-label="Scroll left"
         >
-          <ChevronLeft size={24} />
+          ←
         </button>
 
         <div 
@@ -50,13 +52,13 @@ const ProductCarousel = ({ products, title, isLoading }) => {
         >
           {products.map((product) => (
             <div 
-              key={product._id || product.id} 
+              key={product.id || index} // Changed from _id to id with fallback to index
               className="min-w-[200px] relative cursor-pointer"
-              onClick={() => setFlippedCard(flippedCard === product._id ? null : product._id)}
+              onClick={() => setFlippedCard(flippedCard === product.id ? null : product.id)}
             >
               <div 
                 className={`relative transform transition-transform duration-500 ${
-                  flippedCard === product._id ? 'rotate-y-180' : ''
+                  flippedCard === product.id ? 'rotate-y-180' : ''
                 }`}
                 style={{ transformStyle: 'preserve-3d' }}
               >
@@ -68,7 +70,7 @@ const ProductCarousel = ({ products, title, isLoading }) => {
                     className="w-48 h-48 object-cover rounded-lg mb-2"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "/api/placeholder/192/192";
+                      e.target.src = "/path_to_default_image.jpg";
                     }}
                   />
                   <h3 className="font-semibold truncate">{product.brand}</h3>
@@ -76,7 +78,7 @@ const ProductCarousel = ({ products, title, isLoading }) => {
                 </div>
 
                 {/* Back of card - Ingredients */}
-                {flippedCard === product._id && (
+                {flippedCard === product.id && (
                   <div 
                     className="absolute inset-0 bg-white rounded-lg p-4 shadow overflow-y-auto"
                     style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
@@ -101,10 +103,10 @@ const ProductCarousel = ({ products, title, isLoading }) => {
 
         <button 
           onClick={() => scroll('right')} 
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 rounded-full p-2 shadow-md hover:bg-gray-100"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
           aria-label="Scroll right"
         >
-          <ChevronRight size={24} />
+          →
         </button>
       </div>
     </div>
