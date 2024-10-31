@@ -152,162 +152,174 @@ function App() {
       <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
       <p>Search our database of products or paste any product’s ingredients to check for pore-clogging ingredients.</p>
 
-      {/* Browse Categories Section */}
-      <section className="browse-categories-section">
-        <h2>Find Products by Category: Pore-Safe and Pore-Clogging Products</h2>
-        <button onClick={() => setShowCategories(!showCategories)} className="browse-categories-button">
-          {showCategories ? '▼ Browse Categories' : '▶ Browse Categories'}
-        </button>
 
-        {/* Display categories in 4 columns */}
-        {showCategories && (
-          <div className="categories-list" style={{ columnCount: 4, textAlign: 'left' }}>
-            {categories.map((category, index) => (
-              <div
-                key={index}
-                onClick={() => handleCategoryClick(category)}
-                className="category-item"
-              >
-                {category}
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
 
-        {/* Display products in selected category */}
-        {/* Display products in selected category */}
-        {selectedCategory && (
-          <div className="category-products">
-            <h3>{selectedCategory}</h3>
-            
-            {/* Safe Products */}
-            <h4>Pore-Safe Products</h4>
-            {safeProducts.length > 0 ? (
-              <ul className="product-list">
-                {safeProducts.map((product, index) => (
-                  <li key={index} className="product-item" onClick={() => handleProductSelect(product)}>
-                    <span>{product.brand} - {product.name}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No pore-safe products found in this category.</p>
-            )}
 
-            {/* Unsafe Products */}
-            <h4>Pore-Clogging Products</h4>
-            {unsafeProducts.length > 0 ? (
-              <ul className="product-list">
-                {unsafeProducts.map((product, index) => (
-                  <li key={index} className="product-item" onClick={() => handleProductSelect(product)}>
-                    <span>{product.brand} - {product.name}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No pore-clogging products found in this category.</p>
-            )}
 
-            {/* Product Detail Section - Will appear when a product is selected */}
-            {selectedProduct && (
-              <div className="product-detail">
-                <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-                <img
-                  className="product-image"
-                  src={selectedProduct.image_url}
-                  alt={selectedProduct.name}
-                  onError={handleImageError}
-                />
-                <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
-                {loadingIngredients ? (
-                  <p>Loading ingredients...</p>
-                ) : (
-                  <>
-                    <p className="product-description">Ingredients:</p>
-                    {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
-                      <ul className="ingredients-list">
-                        {selectedProduct.ingredients.map((ingredient, index) => (
-                          <li key={index}>
-                            {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>No ingredients information available.</p>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        )}
 
-      {/* Product Search Section */}
-      <section className="product-search-section">
-        <h2>Product Search</h2>
-        <p>Search our Database of Products</p>
-        <div className="search-container">
-          <i className="fas fa-search search-icon"></i> 
-          <input
-            className="search-input"
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search Products..."
-          />
-          {showDropdown && (
-            <div className="dropdown">
-              {recommendedProducts.map((product, index) => (
+
+
+
+
+        {/* Browse Categories Section */}
+        <section className="browse-categories-section">
+          <h2>Find Products by Category: Pore-Safe and Pore-Clogging Products</h2>
+          <button onClick={() => setShowCategories(!showCategories)} className="browse-categories-button">
+            {showCategories ? '▼ Browse Categories' : '▶ Browse Categories'}
+          </button>
+
+          {/* Display categories in 4 columns */}
+          {showCategories && (
+            <div 
+              className="categories-list grid grid-cols-4 gap-x-8 gap-y-2 mt-4 max-h-[60vh] overflow-y-auto"
+            >
+              {categories.map((category, index) => (
                 <div
                   key={index}
-                  className="suggestion-item"
-                  onClick={() => handleProductSelect(product)}
+                  onClick={() => handleCategoryClick(category)}
+                  className="cursor-pointer hover:text-blue-600 transition-colors"
                 >
-                  <img
-                    className="suggestion-image"
-                    src={product.image_url}
-                    alt={product.name}
-                    onError={handleImageError}
-                  />
-                  <span>{highlightText(product.brand + ' - ' + (product.name || ''), searchTerm)}</span>
+                  {category}
                 </div>
               ))}
             </div>
           )}
-        </div>
-      </section>
 
-      {selectedProduct && (
-        <div className="product-detail">
-          <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-          <img
-            className="product-image"
-            src={selectedProduct.image_url}
-            alt={selectedProduct.name}
-            onError={handleImageError}
-          />
-          <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
-          {loadingIngredients ? (
-            <p>Loading ingredients...</p>
-          ) : (
-            <>
-              <p className="product-description">Ingredients:</p>
-              {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
-                <ul className="ingredients-list">
-                  {selectedProduct.ingredients.map((ingredient, index) => (
-                    <li key={index}>
-                      {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No ingredients information available.</p>
+          {/* Display products in selected category */}
+          {selectedCategory && (
+            <div className="category-products space-y-8">
+              <h3 className="text-2xl font-bold">{selectedCategory}</h3>
+              
+              {/* Safe Products */}
+              <ProductCarousel 
+                products={safeProducts} 
+                title="Pore-Safe Products" 
+                isLoading={loadingIngredients} 
+              />
+
+              {/* Unsafe Products */}
+              <ProductCarousel 
+                products={unsafeProducts} 
+                title="Products with Pore-Clogging Ingredients" 
+                isLoading={loadingIngredients} 
+              />
+
+              {/* Product Detail Section - Will appear when a product is selected */}
+              {selectedProduct && (
+                <div className="product-detail">
+                  <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+                  <img
+                    className="product-image"
+                    src={selectedProduct.image_url}
+                    alt={selectedProduct.name}
+                    onError={handleImageError}
+                  />
+                  <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+                  {loadingIngredients ? (
+                    <p>Loading ingredients...</p>
+                  ) : (
+                    <>
+                      <p className="product-description">Ingredients:</p>
+                      {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+                        <ul className="ingredients-list">
+                          {selectedProduct.ingredients.map((ingredient, index) => (
+                            <li key={index}>
+                              {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>No ingredients information available.</p>
+                      )}
+                    </>
+                  )}
+                </div>
               )}
-            </>
+            </div>
           )}
-        </div>
-      )}
+        </section>
+        
+        {/* Product Search Section */}
+        <section className="product-search-section">
+          <h2>Product Search</h2>
+          <p>Search our Database of Products</p>
+          <div className="search-container">
+            <i className="fas fa-search search-icon"></i> 
+            <input
+              className="search-input"
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search Products..."
+            />
+            {showDropdown && (
+              <div className="dropdown">
+                {recommendedProducts.map((product, index) => (
+                  <div
+                    key={index}
+                    className="suggestion-item"
+                    onClick={() => handleProductSelect(product)}
+                  >
+                    <img
+                      className="suggestion-image"
+                      src={product.image_url}
+                      alt={product.name}
+                      onError={handleImageError}
+                    />
+                    <span>{highlightText(product.brand + ' - ' + (product.name || ''), searchTerm)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {selectedProduct && (
+          <div className="product-detail">
+            <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+            <img
+              className="product-image"
+              src={selectedProduct.image_url}
+              alt={selectedProduct.name}
+              onError={handleImageError}
+            />
+            <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+            {loadingIngredients ? (
+              <p>Loading ingredients...</p>
+            ) : (
+              <>
+                <p className="product-description">Ingredients:</p>
+                {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+                  <ul className="ingredients-list">
+                    {selectedProduct.ingredients.map((ingredient, index) => (
+                      <li key={index}>
+                        {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No ingredients information available.</p>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       {/* Ingredient Checker Section */}
       <section className="ingredient-checker-section">
