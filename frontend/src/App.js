@@ -159,12 +159,17 @@ function App() {
         </button>
 
         {/* Display categories as buttons */}
+        {/* Display categories as text */}
         {selectedCategory === null && (
-          <div className="categories-list">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {categories.map((category, index) => (
-              <button key={index} onClick={() => handleCategoryClick(category)} className="category-button">
+              <div
+                key={index}
+                onClick={() => handleCategoryClick(category)}
+                className="p-3 text-center cursor-pointer hover:bg-gray-100 rounded-lg transition-colors"
+              >
                 {category}
-              </button>
+              </div>
             ))}
           </div>
         )}
