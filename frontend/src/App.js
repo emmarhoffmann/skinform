@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import ProductCarousel from './ProductCarousel'; 
 
 
 function App() {
@@ -15,12 +14,6 @@ function App() {
   const [pastedIngredients, setPastedIngredients] = useState('');
   const [poreCloggingResults, setPoreCloggingResults] = useState([]);
   const [poreCloggingIngredients, setPoreCloggingIngredients] = useState([]);
-
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [safeProducts, setSafeProducts] = useState([]);
-  const [unsafeProducts, setUnsafeProducts] = useState([]);
-  const [showCategories, setShowCategories] = useState(false);
 
   // Fetch the pore-clogging ingredients when the component mounts
   useEffect(() => {
@@ -50,13 +43,6 @@ function App() {
       setShowDropdown(false);
     }
   }, [searchTerm]);
-
-  // Fetch categories on component mount
-  useEffect(() => {
-    axios.get('https://skinform.onrender.com/categories')
-      .then(response => setCategories(response.data))
-      .catch(error => console.error("Error fetching categories:", error));
-  }, []);
 
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
@@ -88,19 +74,6 @@ function App() {
       .catch(error => {
         console.error('Error checking ingredients:', error);
       });
-  };
-
-  // Fetch products by category when a category is selected
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    axios.get(`https://skinform.onrender.com/products-by-category`, {
-      params: { category }
-    })
-      .then(response => {
-        setSafeProducts(response.data.products_without_pore_clogging);
-        setUnsafeProducts(response.data.products_with_pore_clogging);
-      })
-      .catch(error => console.error("Error fetching products by category:", error));
   };
 
   // Highlighting search term in product
@@ -153,14 +126,71 @@ function App() {
       <h1>Pore-Clogging Product Search & Ingredient Checker</h1>
       <p>Search our database of products or paste any product’s ingredients to check for pore-clogging ingredients.</p>
 
+      {/* Product Search Section */}
+      <section className="product-search-section">
+        <h2>Product Search</h2>
+        <p>Search our Database of Products</p>
+        <div className="search-container">
+          <i className="fas fa-search search-icon"></i> 
+          <input
+            className="search-input"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search Products..."
+          />
+          {showDropdown && (
+            <div className="dropdown">
+              {recommendedProducts.map((product, index) => (
+                <div
+                  key={index}
+                  className="suggestion-item"
+                  onClick={() => handleProductSelect(product)}
+                >
+                  <img
+                    className="suggestion-image"
+                    src={product.image_url}
+                    alt={product.name}
+                    onError={handleImageError}
+                  />
+                  <span>{highlightText(product.brand + ' - ' + (product.name || ''), searchTerm)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
-
-
-
-
-
-
-
+      {selectedProduct && (
+        <div className="product-detail">
+          <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+          <img
+            className="product-image"
+            src={selectedProduct.image_url}
+            alt={selectedProduct.name}
+            onError={handleImageError}
+          />
+          <h2 className="product-title">{selectedProduct.brand} - {selectedProduct.name}</h2>
+          {loadingIngredients ? (
+            <p>Loading ingredients...</p>
+          ) : (
+            <>
+              <p className="product-description">Ingredients:</p>
+              {selectedProduct.ingredients && selectedProduct.ingredients.length > 0 ? (
+                <ul className="ingredients-list">
+                  {selectedProduct.ingredients.map((ingredient, index) => (
+                    <li key={index}>
+                      {highlightPoreCloggingIngredients(ingredient.name, ingredient.matching_pore_clogging_ingredients)}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No ingredients information available.</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* Ingredient Checker Section */}
       <section className="ingredient-checker-section">
