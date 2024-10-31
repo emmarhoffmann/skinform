@@ -455,3 +455,23 @@ h2 {
 }
 
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
