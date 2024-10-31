@@ -19,6 +19,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [safeProducts, setSafeProducts] = useState([]);
   const [unsafeProducts, setUnsafeProducts] = useState([]);
+  const [showCategories, setShowCategories] = useState(false);
 
   // Fetch the pore-clogging ingredients when the component mounts
   useEffect(() => {
